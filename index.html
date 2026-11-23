@@ -112,6 +112,23 @@ summary::after{content:" ▾"}details[open] summary::after{content:" ▴"}
 .empty div{font-size:40px;margin-bottom:6px}
 
 .hide{display:none!important}
+/* material */
+.saldo{background:var(--grad);color:#fff;border-radius:var(--r);padding:22px 20px;margin-bottom:14px;box-shadow:0 14px 30px -14px rgba(124,58,237,.7)}
+.saldo>span{font-size:13px;font-weight:600;opacity:.9}
+#m-saldo{font-size:34px;font-weight:800;letter-spacing:-.03em;margin:4px 0 16px}
+#m-saldo.neg{color:#ffe1e8}
+.saldo-det{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.saldo-det div{background:rgba(255,255,255,.16);border-radius:12px;padding:10px}
+.saldo-det small{display:block;font-size:11px;opacity:.85;font-weight:600}
+.saldo-det b{font-size:14px;font-weight:700;white-space:nowrap}
+.mov{list-style:none;padding:0;margin:8px 0 0}
+.mov li{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--bd)}
+.mov li:last-child{border-bottom:none}
+.mi{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;flex:none;background:var(--amb-soft)}
+.mi.transferencia{background:var(--blue-soft)}
+.md{flex:1;min-width:0}.md b{display:block;font-size:14px}.md small{color:var(--mut);font-size:12px;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mv{font-weight:800;color:var(--bad);white-space:nowrap;font-variant-numeric:tabular-nums}
+nav button span{font-size:11px}
 .editbar{display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--amb-soft);color:var(--amb);font-weight:700;font-size:14px;padding:10px 12px 10px 14px;border-radius:14px;margin-bottom:14px}
 button.sm{padding:7px 12px;font-size:13px;border-radius:10px}
 
@@ -151,6 +168,7 @@ table.grid{width:100%;border-collapse:separate;border-spacing:0;font-size:14px;w
 <nav>
   <button data-t="fechar" class="act"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg><span>Fechar</span></button>
   <button data-t="consulta"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg><span>Consulta</span></button>
+  <button data-t="material"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><path d="M3 6h18M16 10a4 4 0 0 1-8 0"/></svg><span>Material</span></button>
   <button data-t="cadastros"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg><span>Cadastros</span></button>
 </nav>
 <main>
@@ -214,6 +232,35 @@ table.grid{width:100%;border-collapse:separate;border-spacing:0;font-size:14px;w
   <div id="c-lista"></div>
 </section>
 
+<!-- MATERIAL -->
+<section id="t-material" class="hide">
+  <div class="saldo">
+    <span>Saldo para compra de material</span>
+    <div id="m-saldo">R$ 0,00</div>
+    <div class="saldo-det">
+      <div><small>Reservado</small><b id="m-reservado">R$ 0,00</b></div>
+      <div><small>Compras</small><b id="m-compras">R$ 0,00</b></div>
+      <div><small>Transferências</small><b id="m-transf">R$ 0,00</b></div>
+    </div>
+  </div>
+  <div class="card">
+    <h2><span class="ic">🧾</span>Registrar saída</h2>
+    <div class="row">
+      <div><label>Data</label><input type="date" id="m-data"></div>
+      <div><label>Valor (R$)</label><input type="number" step="0.01" min="0" inputmode="decimal" id="m-valor"></div>
+    </div>
+    <label>Descrição (opcional)</label>
+    <input id="m-desc" placeholder="Ex.: lâmpadas, fornecedor…">
+    <div class="msg" id="m-msg"></div>
+    <div class="row" style="margin-top:14px">
+      <button class="p" id="btn-m-compra">🛒 Registrar compra</button>
+      <button id="btn-m-transf">🔁 Registrar transferência</button>
+    </div>
+    <p class="mut" style="margin-bottom:0">As duas opções descontam do saldo. A transferência não conta como compra de material.</p>
+  </div>
+  <div id="m-hist"></div>
+</section>
+
 <!-- CADASTROS -->
 <section id="t-cadastros" class="hide">
   <div class="card">
@@ -275,7 +322,7 @@ const r2=v=>Math.round(v*100)/100;
 let db;
 function load(){
   try{db=JSON.parse(localStorage.getItem(KEY))}catch(e){}
-  db=Object.assign({config:{precoVenda:50,taxaCartao:0,mult:15,gerenteNome:'',gerenteValor:0},comissionados:[],cidades:[],fechamentos:[]},db||{});
+  db=Object.assign({config:{precoVenda:50,taxaCartao:0,mult:15,gerenteNome:'',gerenteValor:0},comissionados:[],cidades:[],fechamentos:[],movimentos:[]},db||{});
   if(db.config.mult==null) db.config.mult=15;
   db.fechamentos.forEach(f=>Object.assign(f,calc(f,f.config)));
 }
@@ -288,8 +335,9 @@ function goTab(t){
   const atual=document.querySelector('nav button.act').dataset.t;
   if(atual==='fechar'&&t!=='fechar'&&(fechado||editId))resetFechar();
   document.querySelectorAll('nav button').forEach(x=>x.classList.toggle('act',x.dataset.t===t));
-  ['fechar','consulta','cadastros'].forEach(x=>$('t-'+x).classList.toggle('hide',x!==t));
+  ['fechar','consulta','material','cadastros'].forEach(x=>$('t-'+x).classList.toggle('hide',x!==t));
   if(t==='consulta') renderConsulta();
+  if(t==='material') renderMaterial();
   if(t==='cadastros') renderCadastros();
   if(t==='fechar') refreshFecharLists();
   scrollTo({top:0});
@@ -523,6 +571,36 @@ function renderConsulta(){
   });
 }
 $('c-filtro').onchange=renderConsulta;
+
+/* MATERIAL */
+function renderMaterial(){
+  const reservado=r2(db.fechamentos.reduce((s,f)=>s+(f.material||0),0));
+  const tot=t=>r2(db.movimentos.filter(m=>m.tipo===t).reduce((s,m)=>s+m.valor,0));
+  const compras=tot('compra'),transf=tot('transferencia'),saldo=r2(reservado-compras-transf);
+  $('m-saldo').textContent=fmt(saldo);$('m-saldo').classList.toggle('neg',saldo<0);
+  $('m-reservado').textContent=fmt(reservado);$('m-compras').textContent=fmt(compras);$('m-transf').textContent=fmt(transf);
+  if(!$('m-data').value)$('m-data').value=new Date().toLocaleDateString('sv-SE');
+  const lst=[...db.movimentos].sort((a,b)=>b.data.localeCompare(a.data)||b.id-a.id);
+  $('m-hist').innerHTML=!lst.length?'<div class="card empty mut"><div>🧾</div>Nenhuma compra ou transferência registrada.</div>':
+    `<div class="card"><h2><span class="ic">📜</span>Histórico</h2><ul class="mov">${lst.map(m=>`
+      <li><span class="mi ${m.tipo}">${m.tipo==='compra'?'🛒':'🔁'}</span>
+        <div class="md"><b>${m.tipo==='compra'?'Compra de material':'Transferência'}</b><small>${fmtD(m.data)}${m.desc?' · '+esc(m.desc):''}</small></div>
+        <span class="mv">− ${fmt(m.valor)}</span>
+        <button class="x" data-id="${m.id}" title="Excluir">✕</button></li>`).join('')}</ul></div>`;
+  document.querySelectorAll('#m-hist .x').forEach(b=>b.onclick=()=>{
+    if(!confirm('Excluir este registro? O valor volta para o saldo.'))return;
+    db.movimentos=db.movimentos.filter(m=>m.id!=b.dataset.id);save();renderMaterial();
+  });
+}
+function registrarMov(tipo){
+  const data=$('m-data').value,valor=num('m-valor');
+  if(!data||!(valor>0)){$('m-msg').textContent='Informe a data e um valor maior que zero.';return;}
+  $('m-msg').textContent='';
+  db.movimentos.push({id:Date.now(),tipo,data,valor:r2(valor),desc:$('m-desc').value.trim()});
+  save();$('m-valor').value='';$('m-desc').value='';renderMaterial();
+}
+$('btn-m-compra').onclick=()=>registrarMov('compra');
+$('btn-m-transf').onclick=()=>registrarMov('transferencia');
 
 load();resetFechar();refreshFecharLists();
 if(!db.comissionados.length&&!db.fechamentos.length&&!db.config.gerenteNome){document.querySelector('nav [data-t=cadastros]').click();}
