@@ -112,9 +112,34 @@ summary::after{content:" ▾"}details[open] summary::after{content:" ▴"}
 .empty div{font-size:40px;margin-bottom:6px}
 
 .hide{display:none!important}
+.editbar{display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--amb-soft);color:var(--amb);font-weight:700;font-size:14px;padding:10px 12px 10px 14px;border-radius:14px;margin-bottom:14px}
+button.sm{padding:7px 12px;font-size:13px;border-radius:10px}
+
+/* tabela consulta */
+.tcard{padding:0;overflow:hidden}
+.tw{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table.grid{width:100%;border-collapse:separate;border-spacing:0;font-size:14px;white-space:nowrap}
+.grid th,.grid td{padding:12px 14px;border-bottom:1px solid var(--bd);text-align:left;font-weight:500}
+.grid td:last-child{font-weight:500}
+.grid thead th{font-size:11px;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:.05em;background:var(--field);vertical-align:bottom}
+.grid th small{display:block;font-size:9px;font-weight:600;color:var(--pri);letter-spacing:.06em}
+.grid .n{text-align:right;font-variant-numeric:tabular-nums}
+.grid .st{font-weight:800;color:var(--pri)}
+.grid .neg{color:var(--bad)}
+.grid .stk{position:sticky;left:0;background:var(--card);z-index:1;box-shadow:1px 0 0 var(--bd)}
+.grid thead .stk{background:var(--field)}
+.grid tbody tr:hover td{background:var(--pri-soft)}
+.grid tfoot td{font-weight:800;background:var(--field);border-bottom:none}
+.grid tfoot .stk{background:var(--field)}
+.grid .chip{margin:0}
+.acts{display:flex;gap:4px;justify-content:flex-end}
+.acts button{border:none;background:var(--field);padding:7px 9px;border-radius:10px;font-size:15px;line-height:1}
+.acts button:hover{background:var(--pri-soft)}
+.acts button[data-a=del]:hover{background:var(--bad-soft)}
 .msg{color:var(--bad);background:var(--bad-soft);font-size:14px;margin-top:10px;padding:0;border-radius:12px;font-weight:500}
 .msg:not(:empty){padding:12px 14px}
 </style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" defer></script>
 </head>
 <body>
 <header>
@@ -133,6 +158,7 @@ summary::after{content:" ▾"}details[open] summary::after{content:" ▴"}
 <!-- FECHAR SEMANA -->
 <section id="t-fechar">
   <div class="card">
+    <div class="editbar hide" id="f-edit"><span id="f-edit-txt"></span><button class="sm" id="btn-cancel-edit">Cancelar</button></div>
     <h2><span class="ic">📅</span>Dados da semana</h2>
     <div class="row">
       <div><label>Data início</label><input type="date" id="f-ini"></div>
@@ -168,10 +194,13 @@ summary::after{content:" ▾"}details[open] summary::after{content:" ▴"}
   <div class="msg" id="f-msg"></div>
 
   <div class="card hide" id="f-res" style="margin-top:14px">
-    <h2><span class="ic">✅</span>Semana fechada!</h2>
+    <h2><span class="ic">✅</span><span id="f-res-titulo">Semana fechada!</span></h2>
     <div class="res" id="f-res-body"></div>
     <p class="mut" id="f-res-nota"></p>
-    <button id="btn-novo" style="width:100%">Novo fechamento</button>
+    <div class="row">
+      <button class="p" id="btn-pdf-res">📄 Gerar PDF</button>
+      <button id="btn-novo">Novo fechamento</button>
+    </div>
   </div>
 </section>
 
@@ -207,9 +236,9 @@ summary::after{content:" ▾"}details[open] summary::after{content:" ▴"}
   <button class="p big" id="btn-salvar-par" style="margin-bottom:14px">Salvar parâmetros</button>
 
   <div class="card">
-    <h2><span class="ic">🤝</span>Comissionados</h2>
+    <h2><span class="ic">🤝</span>Vendedores</h2>
     <div class="row" style="align-items:flex-end">
-      <div style="flex:3"><input id="p-com-nome" placeholder="Nome do comissionado"></div>
+      <div style="flex:3"><input id="p-com-nome" placeholder="Nome do vendedor"></div>
       <div style="flex:1;min-width:90px"><button class="p" id="btn-add-comi" style="width:100%">Adicionar</button></div>
     </div>
     <ul class="list" id="p-com-lista"></ul>
@@ -253,14 +282,18 @@ function load(){
 function save(){try{localStorage.setItem(KEY,JSON.stringify(db))}catch(e){alert('Não foi possível salvar no navegador.')}}
 
 /* navegação */
-document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>{
-  document.querySelectorAll('nav button').forEach(x=>x.classList.toggle('act',x===b));
-  ['fechar','consulta','cadastros'].forEach(t=>$('t-'+t).classList.toggle('hide',t!==b.dataset.t));
-  if(b.dataset.t==='consulta') renderConsulta();
-  if(b.dataset.t==='cadastros') renderCadastros();
-  if(b.dataset.t==='fechar') refreshFecharLists();
+let fechado=false,editId=null,ultimoId=null;
+document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>goTab(b.dataset.t));
+function goTab(t){
+  const atual=document.querySelector('nav button.act').dataset.t;
+  if(atual==='fechar'&&t!=='fechar'&&(fechado||editId))resetFechar();
+  document.querySelectorAll('nav button').forEach(x=>x.classList.toggle('act',x.dataset.t===t));
+  ['fechar','consulta','cadastros'].forEach(x=>$('t-'+x).classList.toggle('hide',x!==t));
+  if(t==='consulta') renderConsulta();
+  if(t==='cadastros') renderCadastros();
+  if(t==='fechar') refreshFecharLists();
   scrollTo({top:0});
-});
+}
 
 /* CADASTROS */
 function renderCadastros(){
@@ -311,7 +344,7 @@ $('f-ger-nome').oninput=$('f-ger-valor').oninput=()=>gerEditado=true;
 function refreshFecharLists(){
   syncGerente();
   $('dl-cidades').innerHTML=db.cidades.map(c=>`<option value="${esc(c)}">`).join('');
-  $('no-com-msg').textContent=db.comissionados.length?'':'Cadastre os comissionados na aba Cadastros.';
+  $('no-com-msg').textContent=db.comissionados.length?'':'Cadastre os vendedores na aba Cadastros.';
   document.querySelectorAll('#f-coms select').forEach(s=>{const v=s.value;s.innerHTML=comOptions();s.value=v;});
 }
 const comOptions=()=>'<option value="">Selecione…</option>'+db.comissionados.map(n=>`<option>${esc(n)}</option>`).join('');
@@ -320,8 +353,9 @@ function addComRow(){
   d.innerHTML=`<select>${comOptions()}</select><input type="number" step="0.01" min="0" inputmode="decimal" placeholder="Valor R$"><button class="x" title="Remover">✕</button>`;
   d.querySelector('.x').onclick=()=>d.remove();
   $('f-coms').appendChild(d);
+  return d;
 }
-$('btn-add-com').onclick=addComRow;
+$('btn-add-com').onclick=()=>addComRow();
 function updTotal(){$('f-total').textContent=fmt(num('f-cartao')+num('f-dinheiro'))}
 $('f-cartao').oninput=updTotal;$('f-dinheiro').oninput=updTotal;
 
@@ -342,9 +376,31 @@ function resetFechar(){
   ['f-ini','f-fim','f-cidade','f-cartao','f-dinheiro'].forEach(i=>$(i).value='');
   gerEditado=false;syncGerente();
   $('f-coms').innerHTML='';updTotal();$('f-res').classList.add('hide');$('f-msg').textContent='';
-  $('btn-fechar').disabled=false;
+  $('btn-fechar').disabled=false;$('btn-fechar').textContent='Fechar semana';
+  $('f-edit').classList.add('hide');
+  fechado=false;editId=null;
 }
 $('btn-novo').onclick=()=>{resetFechar();scrollTo(0,0)};
+$('btn-pdf-res').onclick=()=>{const f=db.fechamentos.find(x=>x.id==ultimoId);if(f)gerarPDF(f)};
+$('btn-cancel-edit').onclick=()=>{resetFechar();goTab('consulta')};
+
+function editar(id){
+  const f=db.fechamentos.find(x=>x.id==id);if(!f)return;
+  goTab('fechar');resetFechar();
+  editId=f.id;
+  $('f-ini').value=f.inicio;$('f-fim').value=f.fim;$('f-cidade').value=f.cidade;
+  $('f-cartao').value=f.cartao||'';$('f-dinheiro').value=f.dinheiro||'';updTotal();
+  gerEditado=true;$('f-ger-nome').value=f.gerente.nome;$('f-ger-valor').value=f.gerente.valor||'';
+  f.comissoes.forEach(c=>{
+    const d=addComRow(),s=d.querySelector('select');
+    s.value=c.nome;
+    if(s.value!==c.nome){s.insertAdjacentHTML('beforeend',`<option>${esc(c.nome)}</option>`);s.value=c.nome;}
+    d.querySelector('input').value=c.valor;
+  });
+  $('f-edit-txt').textContent=`Editando a semana ${fmtD(f.inicio)} – ${fmtD(f.fim)} (${f.cidade})`;
+  $('f-edit').classList.remove('hide');
+  $('btn-fechar').textContent='Salvar alterações';
+}
 
 $('btn-fechar').onclick=()=>{
   const ini=$('f-ini').value,fim=$('f-fim').value,cidade=$('f-cidade').value.trim();
@@ -356,19 +412,24 @@ $('btn-fechar').onclick=()=>{
   const comissoes=[];
   document.querySelectorAll('#f-coms .com').forEach(r=>{
     const n=r.querySelector('select').value,v=parseFloat(r.querySelector('input').value)||0;
-    if(n||v){if(!n)msg.push('Selecione o comissionado em todas as comissões.');else comissoes.push({nome:n,valor:v});}
+    if(n||v){if(!n)msg.push('Selecione o vendedor em todas as comissões.');else comissoes.push({nome:n,valor:v});}
   });
   if(msg.length){$('f-msg').innerHTML=[...new Set(msg)].join('<br>');return;}
   $('f-msg').textContent='';
   if(!db.cidades.some(c=>c.toLowerCase()===cidade.toLowerCase())){db.cidades.push(cidade);db.cidades.sort((a,b)=>a.localeCompare(b,'pt-BR'));}
-  const f={id:Date.now(),inicio:ini,fim,cidade,cartao:num('f-cartao'),dinheiro:num('f-dinheiro'),
+  const antigo=editId?db.fechamentos.find(x=>x.id==editId):null;
+  const f={id:antigo?antigo.id:Date.now(),inicio:ini,fim,cidade,cartao:num('f-cartao'),dinheiro:num('f-dinheiro'),
     gerente:{nome:$('f-ger-nome').value.trim()||'Gerente',valor:num('f-ger-valor')},comissoes,
-    config:{...db.config}};
+    config:antigo?antigo.config:{...db.config}};
   Object.assign(f,calc(f,f.config));
-  db.fechamentos.push(f);save();refreshFecharLists();
+  if(antigo)db.fechamentos[db.fechamentos.indexOf(antigo)]=f;else db.fechamentos.push(f);
+  save();
+  ultimoId=f.id;fechado=true;
+  $('f-res-titulo').textContent=antigo?'Fechamento atualizado!':'Semana fechada!';
+  $('f-edit').classList.add('hide');editId=null;
   $('f-res-body').innerHTML=`
     <div class="tile v"><span class="t">💰 Total vendido</span><b>${fmt(f.total)}</b></div>
-    <div class="tile"><span class="t">🎈 Brinquedos vendidos</span><b>${f.brinquedos.toLocaleString('pt-BR',{maximumFractionDigits:1})}</b></div>
+    <div class="tile"><span class="t">🎈 Brinquedos vendidos</span><b>${fmtN(f.brinquedos)}</b></div>
     <div class="tile a"><span class="t">🛒 Transferir p/ material</span><b>${fmt(f.material)}</b></div>
     <div class="tile ${f.santander<0?'r':'b'}"><span class="t">🏦 Transferir Santander</span><b>${fmt(f.santander)}</b></div>
     <div class="tile ${f.caixa<0?'r':'g'}"><span class="t">💵 Saldo em dinheiro – caixa</span><b>${fmt(f.caixa)}</b></div>`;
@@ -376,43 +437,89 @@ $('btn-fechar').onclick=()=>{
   $('f-res').classList.remove('hide');$('btn-fechar').disabled=true;
   $('f-res').scrollIntoView({behavior:'smooth'});
 };
+const fmtN=v=>(Number(v)||0).toLocaleString('pt-BR',{maximumFractionDigits:1});
+
+/* PDF */
+function gerarPDF(f){
+  if(!window.jspdf){alert('Não foi possível carregar o gerador de PDF. Verifique a internet e tente de novo.');return;}
+  const {jsPDF}=window.jspdf;const doc=new jsPDF({unit:'mm',format:'a4'});
+  const W=210,M=18,m=s=>String(s).replace(/ | /g,' ');
+  const $$=v=>m(fmt(v));
+  doc.setFillColor(124,58,237);doc.rect(0,0,W,36,'F');
+  doc.setFillColor(219,39,119);doc.rect(0,33,W,3,'F');
+  doc.setTextColor(255,255,255);doc.setFont('helvetica','bold');doc.setFontSize(22);doc.text('Luminosos',M,17);
+  doc.setFont('helvetica','normal');doc.setFontSize(11);doc.text('Resumo do fechamento semanal',M,25);
+  doc.setFontSize(9);doc.text('Gerado em '+new Date().toLocaleDateString('pt-BR'),W-M,25,{align:'right'});
+  let y=50;
+  doc.setTextColor(25,21,38);doc.setFont('helvetica','bold');doc.setFontSize(15);
+  doc.text(`Semana de ${fmtD(f.inicio)} a ${fmtD(f.fim)}`,M,y);
+  y+=7;doc.setFont('helvetica','normal');doc.setFontSize(11);doc.setTextColor(119,113,140);doc.text('Cidade: '+f.cidade,M,y);
+  y+=12;
+  const sec=(titulo,linhas)=>{
+    if(y>250){doc.addPage();y=20;}
+    doc.setFillColor(241,234,254);doc.roundedRect(M,y-5.5,W-2*M,8.5,2,2,'F');
+    doc.setTextColor(124,58,237);doc.setFont('helvetica','bold');doc.setFontSize(11);doc.text(titulo.toUpperCase(),M+3,y);
+    y+=9;
+    linhas.forEach(([l,v,bold])=>{
+      if(y>280){doc.addPage();y=20;}
+      doc.setFont('helvetica',bold?'bold':'normal');doc.setFontSize(bold?11.5:11);doc.setTextColor(25,21,38);
+      doc.text(m(l),M+3,y);doc.text(m(v),W-M-3,y,{align:'right'});
+      doc.setDrawColor(235,231,245);doc.line(M,y+2.8,W-M,y+2.8);y+=8.5;
+    });
+    y+=6;
+  };
+  sec('Vendas',[['Cartão',$$(f.cartao)],['Dinheiro',$$(f.dinheiro)],['Total vendido',$$(f.total),1],['Brinquedos vendidos',fmtN(f.brinquedos)]]);
+  const pags=f.comissoes.map(c=>[c.nome+' (vendedor)',$$(c.valor)]);
+  if(f.gerente.valor)pags.push([f.gerente.nome+' (gerente)',$$(f.gerente.valor)]);
+  pags.push(['Total de pagamentos',$$(f.totCom+f.gerente.valor),1]);
+  sec('Pagamentos',pags);
+  sec('Transferências e saldo',[['Transferir para compra de material',$$(f.material),1],['Transferir Santander',$$(f.santander),1],['Saldo em dinheiro - caixa',$$(f.caixa),1]]);
+  if(y>265){doc.addPage();y=20;}
+  doc.setFont('helvetica','normal');doc.setFontSize(8.5);doc.setTextColor(119,113,140);
+  doc.text(doc.splitTextToSize(`Material = total / ${$$(f.config.precoVenda)} x ${f.config.mult}.   Santander = cartão - ${f.config.taxaCartao}% de taxa - compra de material.   Caixa = dinheiro - comissões - gerente.`,W-2*M),M,y);
+  const nome=('fechamento-'+f.cidade+'-'+f.inicio).normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^\w-]+/g,'-').toLowerCase();
+  doc.save(nome+'.pdf');
+}
 
 /* CONSULTA */
 function renderConsulta(){
-  const cs=[...new Set(db.fechamentos.map(f=>f.cidade))].sort();
+  const cs=[...new Set(db.fechamentos.map(f=>f.cidade))].sort((a,b)=>a.localeCompare(b,'pt-BR'));
   const cur=$('c-filtro').value;
   $('c-filtro').innerHTML='<option value="">Todas</option>'+cs.map(c=>`<option>${esc(c)}</option>`).join('');
   $('c-filtro').value=cs.includes(cur)?cur:'';
   const lst=db.fechamentos.filter(f=>!$('c-filtro').value||f.cidade===$('c-filtro').value)
     .sort((a,b)=>b.inicio.localeCompare(a.inicio));
   if(!lst.length){$('c-lista').innerHTML='<div class="card empty mut"><div>🗓️</div>Nenhuma semana fechada ainda.</div>';return;}
-  $('c-lista').innerHTML=lst.map(f=>{
-    const pag=[...f.comissoes.map(c=>[c.nome,c.valor]),...(f.gerente.valor?[[f.gerente.nome+' (gerente)',f.gerente.valor]]:[])];
-    return `<div class="card wk">
-      <div class="wk-hd">
-        <div><h3>${fmtD(f.inicio)} – ${fmtD(f.fim)}</h3><span class="chip">📍 ${esc(f.cidade)}</span></div>
-        <button class="x" data-id="${f.id}" title="Excluir">🗑</button>
-      </div>
-      <div class="wk-body">
-      <div class="kpi">
-        <div><span>Brinquedos vendidos</span><strong>${f.brinquedos.toLocaleString('pt-BR',{maximumFractionDigits:1})}</strong></div>
-        <div><span>Total vendido</span><strong>${fmt(f.total)}</strong></div>
-      </div>
-      <div class="sub">Pagamentos</div>
-      <table>${pag.map(([n,v])=>`<tr><td>${esc(n)}</td><td>${fmt(v)}</td></tr>`).join('')||'<tr><td class="mut">Sem comissões</td><td></td></tr>'}</table>
-      <details><summary>Mais detalhes</summary>
-        <table>
-          <tr><td>Cartão</td><td>${fmt(f.cartao)}</td></tr>
-          <tr><td>Dinheiro</td><td>${fmt(f.dinheiro)}</td></tr>
-          <tr><td>Compra de material</td><td>${fmt(f.material)}</td></tr>
-          <tr><td>Saldo caixa</td><td>${fmt(f.caixa)}</td></tr>
-          <tr><td>Santander</td><td>${fmt(f.santander)}</td></tr>
-        </table></details>
-      </div>
-    </div>`}).join('');
-  document.querySelectorAll('#c-lista .x').forEach(b=>b.onclick=()=>{
-    if(!confirm('Excluir este fechamento?'))return;
-    db.fechamentos=db.fechamentos.filter(f=>f.id!=b.dataset.id);save();renderConsulta();
+  const vend=[...new Set(lst.flatMap(f=>f.comissoes.map(c=>c.nome)))].sort((a,b)=>a.localeCompare(b,'pt-BR'));
+  const pago=(f,n)=>f.comissoes.filter(c=>c.nome===n).reduce((s,c)=>s+c.valor,0);
+  const soma=fn=>lst.reduce((s,f)=>s+fn(f),0);
+  const traco=v=>v?fmt(v):'–';
+  const cols=[
+    ['Brinquedos',f=>f.brinquedos,fmtN],
+    ['Total vendido',f=>f.total,fmt,'st'],
+    ...vend.map(n=>[n,f=>pago(f,n),traco,'vend']),
+    ['Gerente',f=>f.gerente.valor,traco],
+    ['Material',f=>f.material,fmt],
+    ['Santander',f=>f.santander,fmt],
+    ['Caixa',f=>f.caixa,fmt],
+  ];
+  $('c-lista').innerHTML=`<div class="card tcard"><div class="tw"><table class="grid">
+    <thead><tr><th class="stk">Semana</th><th>Cidade</th>${cols.map(c=>`<th class="n">${c[3]==='vend'?'<small>vendedor</small>':''}${esc(c[0])}</th>`).join('')}<th class="n">Ações</th></tr></thead>
+    <tbody>${lst.map(f=>`<tr>
+      <td class="stk"><b>${fmtD(f.inicio).slice(0,5)} – ${fmtD(f.fim)}</b></td>
+      <td><span class="chip">${esc(f.cidade)}</span></td>
+      ${cols.map(c=>{const v=c[1](f);return `<td class="n${c[3]==='st'?' st':''}${v<0?' neg':''}">${c[2](v)}</td>`}).join('')}
+      <td class="n"><div class="acts"><button data-a="edit" data-id="${f.id}" title="Editar">✏️</button><button data-a="pdf" data-id="${f.id}" title="Gerar PDF">📄</button><button data-a="del" data-id="${f.id}" title="Excluir">🗑️</button></div></td>
+    </tr>`).join('')}</tbody>
+    <tfoot><tr><td class="stk">Total (${lst.length} sem.)</td><td></td>${cols.map(c=>`<td class="n">${c[2](soma(c[1]))}</td>`).join('')}<td></td></tr></tfoot>
+  </table></div></div>
+  <p class="mut" style="text-align:center">✏️ editar · 📄 gerar PDF · 🗑️ excluir</p>`;
+  document.querySelectorAll('#c-lista .acts button').forEach(b=>b.onclick=()=>{
+    const id=b.dataset.id,f=db.fechamentos.find(x=>x.id==id);if(!f)return;
+    if(b.dataset.a==='edit')editar(id);
+    else if(b.dataset.a==='pdf')gerarPDF(f);
+    else if(confirm(`Excluir o fechamento de ${fmtD(f.inicio)} a ${fmtD(f.fim)} (${f.cidade})?`)){
+      db.fechamentos=db.fechamentos.filter(x=>x.id!=id);save();renderConsulta();}
   });
 }
 $('c-filtro').onchange=renderConsulta;
