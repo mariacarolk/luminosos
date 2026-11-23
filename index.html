@@ -112,6 +112,43 @@ summary::after{content:" ▾"}details[open] summary::after{content:" ▴"}
 .empty div{font-size:40px;margin-bottom:6px}
 
 .hide{display:none!important}
+/* consulta */
+.kbig{font-size:34px;font-weight:800;letter-spacing:-.03em;margin:4px 0 16px}
+.fhd{display:flex;justify-content:space-between;align-items:center}
+.filtros label{margin-top:10px}
+#c-lista:has(> .empty){background:none;border:none;box-shadow:none}
+#c-lista > .empty{margin:0}
+.wrow{border-bottom:1px solid var(--bd)}
+.wrow:last-child{border-bottom:none}
+.wtop{display:grid;grid-template-columns:auto 1fr auto;grid-template-areas:"chev info val" "chev info acts";align-items:center;gap:4px 12px;padding:14px 16px 14px 10px;cursor:pointer;transition:background .15s}
+.wtop:hover{background:var(--pri-soft)}
+.chev{grid-area:chev;border:none;background:var(--field);width:32px;height:32px;padding:0;border-radius:10px;display:grid;place-items:center;color:var(--mut)}
+.chev svg{width:18px;height:18px;transition:transform .2s}
+.wrow.open .chev{background:var(--pri-soft);color:var(--pri)}
+.wrow.open .chev svg{transform:rotate(180deg)}
+.winfo{grid-area:info;min-width:0;display:flex;flex-direction:column;align-items:flex-start;gap:6px}
+.winfo b{font-size:15px}
+.winfo .chip{margin:0}
+.wval{grid-area:val;text-align:right}
+.wval small{display:block;font-size:11px;color:var(--mut);font-weight:600}
+.wval b{font-size:17px;font-weight:800;color:var(--pri);white-space:nowrap}
+.wtop .acts{grid-area:acts}
+@media (min-width:640px){
+  .wtop{grid-template-columns:auto 1fr auto auto;grid-template-areas:"chev info val acts";gap:12px 18px}
+  .winfo{flex-direction:row;align-items:center;gap:12px}
+}
+.wdet{display:none;padding:4px 16px 18px 54px;gap:10px;grid-template-columns:repeat(auto-fit,minmax(210px,1fr))}
+.wrow.open .wdet{display:grid;animation:fade .2s ease}
+.wrow.open .wtop{background:var(--pri-soft)}
+.dgrp{background:var(--field);border-radius:14px;padding:12px 14px}
+.dtt{font-size:11px;font-weight:700;color:var(--pri);text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px}
+.dl{display:flex;justify-content:space-between;gap:10px;padding:6px 0;font-size:14px;border-bottom:1px solid var(--bd)}
+.dl:last-child{border-bottom:none}
+.dl span{color:var(--mut)}.dl em{font-style:normal;font-size:10px;font-weight:700;color:var(--pri);background:var(--pri-soft);padding:1px 6px;border-radius:6px;margin-left:4px}
+.dl b{font-variant-numeric:tabular-nums;white-space:nowrap}
+.dl.neg b{color:var(--bad)}
+@media (max-width:480px){.wdet{padding-left:16px}}
+
 /* material */
 .saldo{background:var(--grad);color:#fff;border-radius:var(--r);padding:22px 20px;margin-bottom:14px;box-shadow:0 14px 30px -14px rgba(124,58,237,.7)}
 .saldo>span{font-size:13px;font-weight:600;opacity:.9}
@@ -224,12 +261,27 @@ table.grid{width:100%;border-collapse:separate;border-spacing:0;font-size:14px;w
 
 <!-- CONSULTA -->
 <section id="t-consulta" class="hide">
-  <div class="card">
-    <h2><span class="ic">📊</span>Semanas fechadas</h2>
-    <label>Filtrar por cidade</label>
-    <select id="c-filtro"></select>
+  <div class="saldo">
+    <span>Total vendido</span>
+    <div id="c-kpi-total" class="kbig">R$ 0,00</div>
+    <div class="saldo-det">
+      <div><small>Semanas</small><b id="c-kpi-sem">0</b></div>
+      <div><small>Brinquedos</small><b id="c-kpi-brinq">0</b></div>
+      <div><small>Média/semana</small><b id="c-kpi-media">R$ 0,00</b></div>
+    </div>
   </div>
-  <div id="c-lista"></div>
+  <div class="card filtros">
+    <div class="fhd"><h2><span class="ic">🔎</span>Filtros</h2><button class="sm hide" id="c-limpar">Limpar</button></div>
+    <div class="row">
+      <div><label>Mês</label><select id="c-mes"></select></div>
+      <div><label>Praça</label><select id="c-cidade"></select></div>
+    </div>
+    <div class="row">
+      <div><label>De</label><input type="date" id="c-de"></div>
+      <div><label>Até</label><input type="date" id="c-ate"></div>
+    </div>
+  </div>
+  <div class="card tcard" id="c-lista"></div>
 </section>
 
 <!-- MATERIAL -->
@@ -530,47 +582,69 @@ function gerarPDF(f){
 }
 
 /* CONSULTA */
+const MESES=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+const abertos=new Set();
 function renderConsulta(){
+  const sel=(id,opts)=>{const cur=$(id).value;$(id).innerHTML=opts;if([...$(id).options].some(o=>o.value===cur))$(id).value=cur;};
   const cs=[...new Set(db.fechamentos.map(f=>f.cidade))].sort((a,b)=>a.localeCompare(b,'pt-BR'));
-  const cur=$('c-filtro').value;
-  $('c-filtro').innerHTML='<option value="">Todas</option>'+cs.map(c=>`<option>${esc(c)}</option>`).join('');
-  $('c-filtro').value=cs.includes(cur)?cur:'';
-  const lst=db.fechamentos.filter(f=>!$('c-filtro').value||f.cidade===$('c-filtro').value)
+  sel('c-cidade','<option value="">Todas</option>'+cs.map(c=>`<option value="${esc(c)}">${esc(c)}</option>`).join(''));
+  const ms=[...new Set(db.fechamentos.map(f=>f.inicio.slice(0,7)))].sort().reverse();
+  sel('c-mes','<option value="">Todos</option>'+ms.map(m=>`<option value="${m}">${MESES[+m.slice(5)-1]}/${m.slice(0,4)}</option>`).join(''));
+  const fc=$('c-cidade').value,fm=$('c-mes').value,de=$('c-de').value,ate=$('c-ate').value;
+  const lst=db.fechamentos.filter(f=>(!fc||f.cidade===fc)&&(!fm||f.inicio.slice(0,7)===fm)&&(!de||f.fim>=de)&&(!ate||f.inicio<=ate))
     .sort((a,b)=>b.inicio.localeCompare(a.inicio));
-  if(!lst.length){$('c-lista').innerHTML='<div class="card empty mut"><div>🗓️</div>Nenhuma semana fechada ainda.</div>';return;}
-  const vend=[...new Set(lst.flatMap(f=>f.comissoes.map(c=>c.nome)))].sort((a,b)=>a.localeCompare(b,'pt-BR'));
-  const pago=(f,n)=>f.comissoes.filter(c=>c.nome===n).reduce((s,c)=>s+c.valor,0);
+  $('c-limpar').classList.toggle('hide',!(fc||fm||de||ate));
+
   const soma=fn=>lst.reduce((s,f)=>s+fn(f),0);
-  const traco=v=>v?fmt(v):'–';
-  const cols=[
-    ['Brinquedos',f=>f.brinquedos,fmtN],
-    ['Total vendido',f=>f.total,fmt,'st'],
-    ...vend.map(n=>[n,f=>pago(f,n),traco,'vend']),
-    ['Gerente',f=>f.gerente.valor,traco],
-    ['Material',f=>f.material,fmt],
-    ['Santander',f=>f.santander,fmt],
-    ['Caixa',f=>f.caixa,fmt],
-  ];
-  $('c-lista').innerHTML=`<div class="card tcard"><div class="tw"><table class="grid">
-    <thead><tr><th class="stk">Semana</th><th>Cidade</th>${cols.map(c=>`<th class="n">${c[3]==='vend'?'<small>vendedor</small>':''}${esc(c[0])}</th>`).join('')}<th class="n">Ações</th></tr></thead>
-    <tbody>${lst.map(f=>`<tr>
-      <td class="stk"><b>${fmtD(f.inicio).slice(0,5)} – ${fmtD(f.fim)}</b></td>
-      <td><span class="chip">${esc(f.cidade)}</span></td>
-      ${cols.map(c=>{const v=c[1](f);return `<td class="n${c[3]==='st'?' st':''}${v<0?' neg':''}">${c[2](v)}</td>`}).join('')}
-      <td class="n"><div class="acts"><button data-a="edit" data-id="${f.id}" title="Editar">✏️</button><button data-a="pdf" data-id="${f.id}" title="Gerar PDF">📄</button><button data-a="del" data-id="${f.id}" title="Excluir">🗑️</button></div></td>
-    </tr>`).join('')}</tbody>
-    <tfoot><tr><td class="stk">Total (${lst.length} sem.)</td><td></td>${cols.map(c=>`<td class="n">${c[2](soma(c[1]))}</td>`).join('')}<td></td></tr></tfoot>
-  </table></div></div>
-  <p class="mut" style="text-align:center">✏️ editar · 📄 gerar PDF · 🗑️ excluir</p>`;
-  document.querySelectorAll('#c-lista .acts button').forEach(b=>b.onclick=()=>{
-    const id=b.dataset.id,f=db.fechamentos.find(x=>x.id==id);if(!f)return;
-    if(b.dataset.a==='edit')editar(id);
-    else if(b.dataset.a==='pdf')gerarPDF(f);
-    else if(confirm(`Excluir o fechamento de ${fmtD(f.inicio)} a ${fmtD(f.fim)} (${f.cidade})?`)){
-      db.fechamentos=db.fechamentos.filter(x=>x.id!=id);save();renderConsulta();}
+  $('c-kpi-total').textContent=fmt(soma(f=>f.total));
+  $('c-kpi-sem').textContent=lst.length;
+  $('c-kpi-brinq').textContent=fmtN(soma(f=>f.brinquedos));
+  $('c-kpi-media').textContent=fmt(lst.length?soma(f=>f.total)/lst.length:0);
+
+  if(!lst.length){$('c-lista').innerHTML=`<div class="card empty mut"><div>🗓️</div>${db.fechamentos.length?'Nenhuma semana encontrada com esses filtros.':'Nenhuma semana fechada ainda.'}</div>`;return;}
+  const linha=(l,v,cls='')=>`<div class="dl ${cls}"><span>${l}</span><b>${v}</b></div>`;
+  $('c-lista').innerHTML=lst.map(f=>{
+    const pagos={};f.comissoes.forEach(c=>pagos[c.nome]=(pagos[c.nome]||0)+c.valor);
+    const ab=abertos.has(String(f.id));
+    return `<div class="wrow${ab?' open':''}" data-id="${f.id}">
+      <div class="wtop">
+        <button class="chev" aria-label="Ver detalhes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button>
+        <div class="winfo"><b>${fmtD(f.inicio).slice(0,5)} – ${fmtD(f.fim)}</b><span class="chip">📍 ${esc(f.cidade)}</span></div>
+        <div class="wval"><small>Vendido</small><b>${fmt(f.total)}</b></div>
+        <div class="acts"><button data-a="edit" title="Editar">✏️</button><button data-a="pdf" title="Gerar PDF">📄</button><button data-a="del" title="Excluir">🗑️</button></div>
+      </div>
+      <div class="wdet">
+        <div class="dgrp"><div class="dtt">Vendas</div>
+          ${linha('Cartão',fmt(f.cartao))}${linha('Dinheiro',fmt(f.dinheiro))}${linha('Brinquedos vendidos',fmtN(f.brinquedos))}</div>
+        <div class="dgrp"><div class="dtt">Pagamentos</div>
+          ${Object.entries(pagos).map(([n,v])=>linha(esc(n)+' <em>vendedor</em>',fmt(v))).join('')}
+          ${f.gerente.valor?linha(esc(f.gerente.nome)+' <em>gerente</em>',fmt(f.gerente.valor)):''}
+          ${!Object.keys(pagos).length&&!f.gerente.valor?'<div class="mut">Sem pagamentos</div>':''}</div>
+        <div class="dgrp"><div class="dtt">Transferências e saldo</div>
+          ${linha('🛒 Compra de material',fmt(f.material))}
+          ${linha('🏦 Santander',fmt(f.santander),f.santander<0?'neg':'')}
+          ${linha('💵 Caixa',fmt(f.caixa),f.caixa<0?'neg':'')}</div>
+      </div>
+    </div>`}).join('');
+  document.querySelectorAll('#c-lista .wrow').forEach(r=>{
+    const id=r.dataset.id;
+    r.querySelector('.wtop').onclick=e=>{
+      const b=e.target.closest('.acts button');
+      if(b){
+        const f=db.fechamentos.find(x=>x.id==id);if(!f)return;
+        if(b.dataset.a==='edit')editar(id);
+        else if(b.dataset.a==='pdf')gerarPDF(f);
+        else if(confirm(`Excluir o fechamento de ${fmtD(f.inicio)} a ${fmtD(f.fim)} (${f.cidade})?`)){
+          db.fechamentos=db.fechamentos.filter(x=>x.id!=id);save();renderConsulta();}
+        return;
+      }
+      r.classList.toggle('open');
+      r.classList.contains('open')?abertos.add(id):abertos.delete(id);
+    };
   });
 }
-$('c-filtro').onchange=renderConsulta;
+['c-cidade','c-mes','c-de','c-ate'].forEach(i=>$(i).onchange=renderConsulta);
+$('c-limpar').onclick=()=>{['c-cidade','c-mes','c-de','c-ate'].forEach(i=>$(i).value='');renderConsulta();};
 
 /* MATERIAL */
 function renderMaterial(){
