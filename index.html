@@ -220,6 +220,10 @@ summary{color:var(--neon-c)}
 .dl.neg b{color:var(--bad)}
 @media (max-width:480px){.wdet{padding-left:16px}}
 
+.dl.real{align-items:center;flex-wrap:wrap}
+.realf{display:flex;gap:6px;align-items:center;margin-left:auto}
+.realf input{width:118px;padding:7px 10px;font-size:14px;border-radius:10px;text-align:right}
+
 /* material */
 .saldo{background:var(--grad);color:#fff;border-radius:var(--r);padding:22px 20px;margin-bottom:14px;box-shadow:0 14px 30px -14px rgba(124,58,237,.7)}
 .saldo>span{font-size:13px;font-weight:600;opacity:.9}
@@ -616,7 +620,8 @@ function calc(f,c){
     brinquedos:c.precoVenda>0?total/c.precoVenda:0,
     material,
     caixa:r2(f.dinheiro-totCom-f.gerente.valor),
-    santander:r2(f.cartao*(1-c.taxaCartao/100)-material),
+    materialEf:f.materialReal!=null?f.materialReal:material,
+    santander:r2(f.cartao*(1-c.taxaCartao/100)-(f.materialReal!=null?f.materialReal:material)),
     totCom:r2(totCom)
   };
 }
@@ -668,6 +673,7 @@ $('btn-fechar').onclick=()=>{
   const antigo=editId?db.fechamentos.find(x=>x.id==editId):null;
   const f={id:antigo?antigo.id:Date.now(),inicio:ini,fim,cidade,cartao:num('f-cartao'),dinheiro:num('f-dinheiro'),
     gerente:{nome:$('f-ger-nome').value.trim()||'Gerente',valor:num('f-ger-valor')},comissoes,
+    materialReal:antigo&&antigo.materialReal!=null?antigo.materialReal:null,
     config:antigo?antigo.config:{...db.config}};
   Object.assign(f,calc(f,f.config));
   if(antigo)db.fechamentos[db.fechamentos.indexOf(antigo)]=f;else db.fechamentos.push(f);
@@ -721,7 +727,9 @@ function gerarPDF(f){
   if(f.gerente.valor)pags.push([f.gerente.nome+' (gerente)',$$(f.gerente.valor)]);
   pags.push(['Total de pagamentos',$$(f.totCom+f.gerente.valor),1]);
   sec('Pagamentos',pags);
-  sec('Transferências e saldo',[['Transferir para compra de material',$$(f.material),1],['Transferir Santander',$$(f.santander),1],['Saldo em dinheiro - caixa',$$(f.caixa),1]]);
+  sec('Transferências e saldo',[...(f.materialReal!=null
+      ?[['Material (calculado)',$$(f.material)],['Transferido real para material',$$(f.materialReal),1]]
+      :[['Transferir para compra de material',$$(f.material),1]]),['Transferir Santander',$$(f.santander),1],['Saldo em dinheiro - caixa',$$(f.caixa),1]]);
   if(y>265){doc.addPage();y=20;}
   doc.setFont('helvetica','normal');doc.setFontSize(8.5);doc.setTextColor(119,113,140);
   doc.text(doc.splitTextToSize(`Material = total / ${$$(f.config.precoVenda)} x ${f.config.mult}.   Santander = cartão - ${f.config.taxaCartao}% de taxa - compra de material.   Caixa = dinheiro - comissões - gerente.`,W-2*M),M,y);
@@ -769,13 +777,24 @@ function renderConsulta(){
           ${f.gerente.valor?linha(esc(f.gerente.nome)+' <em>gerente</em>',fmt(f.gerente.valor)):''}
           ${!Object.keys(pagos).length&&!f.gerente.valor?'<div class="mut">Sem pagamentos</div>':''}</div>
         <div class="dgrp"><div class="dtt">Transferências e saldo</div>
-          ${linha('🛒 Compra de material',fmt(f.material))}
+          ${linha('🛒 Material (calculado)',fmt(f.material))}
+          <div class="dl real"><span>✅ Transferido real p/ material</span>
+            <div class="realf"><input type="number" step="0.01" min="0" inputmode="decimal" placeholder="${f.material.toFixed(2).replace('.',',')}" value="${f.materialReal??''}"><button class="sm" data-a="real">Salvar</button></div></div>
+          ${f.materialReal!=null&&f.materialReal!==f.material?`<div class="dl ${f.materialReal<f.material?'neg':''}"><span>Diferença</span><b>${fmt(f.materialReal-f.material)}</b></div>`:''}
           ${linha('🏦 Santander',fmt(f.santander),f.santander<0?'neg':'')}
           ${linha('💵 Caixa',fmt(f.caixa),f.caixa<0?'neg':'')}</div>
       </div>
     </div>`}).join('');
   document.querySelectorAll('#c-lista .wrow').forEach(r=>{
     const id=r.dataset.id;
+    r.querySelector('[data-a=real]').onclick=()=>{
+      const f=db.fechamentos.find(x=>x.id==id);if(!f)return;
+      const raw=r.querySelector('.realf input').value.trim();
+      const v=raw===''?null:parseFloat(raw);
+      if(v!=null&&(isNaN(v)||v<0)){alert('Informe um valor válido.');return;}
+      f.materialReal=v==null?null:r2(v);
+      Object.assign(f,calc(f,f.config));save();renderConsulta();
+    };
     r.querySelector('.wtop').onclick=e=>{
       const b=e.target.closest('.acts button');
       if(b){
@@ -796,7 +815,7 @@ $('c-limpar').onclick=()=>{['c-cidade','c-mes','c-de','c-ate'].forEach(i=>$(i).v
 
 /* MATERIAL */
 function renderMaterial(){
-  const reservado=r2(db.fechamentos.reduce((s,f)=>s+(f.material||0),0));
+  const reservado=r2(db.fechamentos.reduce((s,f)=>s+(f.materialEf??f.material??0),0));
   const tot=t=>r2(db.movimentos.filter(m=>m.tipo===t).reduce((s,m)=>s+m.valor,0));
   const compras=tot('compra'),transf=tot('transferencia'),saldo=r2(reservado-compras-transf);
   $('m-saldo').textContent=fmt(saldo);$('m-saldo').classList.toggle('neg',saldo<0);
