@@ -4,40 +4,53 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Luminosos – Fechamentos</title>
-<meta name="theme-color" content="#7c3aed">
+<meta name="theme-color" content="#0c0624">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#f6f4fb;--card:#ffffff;--tx:#191526;--mut:#77718c;--bd:#ebe7f5;--field:#f4f1fa;
-  --pri:#7c3aed;--pri-2:#db2777;--pri-soft:#f1eafe;
-  --ok:#059669;--ok-soft:#e7f8f1;--bad:#e11d48;--bad-soft:#fde8ee;--blue:#2563eb;--blue-soft:#e8effd;--amb:#d97706;--amb-soft:#fdf3e3;
-  --grad:linear-gradient(135deg,#7c3aed 0%,#c026d3 55%,#db2777 100%);
-  --sh:0 1px 2px rgba(24,16,48,.04),0 8px 24px -8px rgba(24,16,48,.10);
+  color-scheme:dark;
+  --bg:#000000;--card:#0b0912;--tx:#f4f1ff;--mut:#9d97b8;--bd:#241d38;--field:#14101f;
+  --pri:#d16bff;--pri-2:#ff4fd8;--pri-soft:rgba(209,107,255,.13);
+  --neon-p:#ff4fd8;--neon-c:#38e1ff;--neon-g:#7dff4f;
+  --ok:#5dff9e;--ok-soft:rgba(93,255,158,.10);--bad:#ff5c8a;--bad-soft:rgba(255,92,138,.12);
+  --blue:#4fd2ff;--blue-soft:rgba(79,210,255,.11);--amb:#ffc94f;--amb-soft:rgba(255,201,79,.11);
+  --grad:linear-gradient(120deg,#a855f7 0%,#ff4fd8 50%,#38e1ff 100%);
+  --sh:0 0 0 1px rgba(209,107,255,.06),0 10px 30px -12px rgba(168,85,247,.35);
   --r:20px;
 }
-@media (prefers-color-scheme:dark){:root{
-  --bg:#0f0d16;--card:#1a1724;--tx:#f1eef8;--mut:#9c96b2;--bd:#2a2638;--field:#221e2f;
-  --pri:#a78bfa;--pri-soft:#2a2242;--ok:#34d399;--ok-soft:#10291f;--bad:#fb7185;--bad-soft:#341620;
-  --blue:#7aa2ff;--blue-soft:#18213a;--amb:#fbbf24;--amb-soft:#2e2312;
-  --sh:0 1px 2px rgba(0,0,0,.3),0 8px 24px -8px rgba(0,0,0,.5);
-}}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html{scroll-behavior:smooth}
 body{margin:0;font-family:"Plus Jakarta Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--tx);font-size:16px;-webkit-font-smoothing:antialiased;padding-bottom:96px}
 
 /* header */
-header{background:var(--grad);color:#fff;padding:22px 20px 64px;border-radius:0 0 28px 28px;position:relative;overflow:hidden}
-header::before,header::after{content:"";position:absolute;border-radius:50%;background:rgba(255,255,255,.12)}
-header::before{width:220px;height:220px;right:-60px;top:-90px}
-header::after{width:120px;height:120px;right:90px;bottom:-60px;background:rgba(255,255,255,.08)}
-.hd{max-width:760px;margin:0 auto;display:flex;align-items:center;gap:12px;position:relative;z-index:1}
-.logo{width:44px;height:44px;border-radius:14px;background:rgba(255,255,255,.2);display:grid;place-items:center;font-size:22px;backdrop-filter:blur(6px)}
-header h1{margin:0;font-size:21px;font-weight:800;letter-spacing:-.02em}
-header p{margin:2px 0 0;font-size:13px;opacity:.85}
+header{color:#fff;padding:22px 20px 30px;border-radius:0 0 28px 28px;position:relative;overflow:hidden;
+  background:
+    radial-gradient(circle at 12% 18%,rgba(236,72,153,.38),transparent 38%),
+    radial-gradient(circle at 70% 25%,rgba(56,189,248,.30),transparent 42%),
+    radial-gradient(circle at 92% 85%,rgba(132,204,22,.22),transparent 40%),
+    radial-gradient(circle at 40% 100%,rgba(168,85,247,.40),transparent 50%),
+    linear-gradient(160deg,#0c0624 0%,#190a3a 55%,#06163a 100%)}
+header::before{content:"";position:absolute;inset:0;opacity:.7;pointer-events:none;
+  background:
+    radial-gradient(circle,rgba(255,122,224,.9) 0 2px,transparent 3px) 8% 70%/100% 100% no-repeat,
+    radial-gradient(circle,rgba(122,232,255,.9) 0 1.5px,transparent 2.5px) 30% 30%/100% 100% no-repeat,
+    radial-gradient(circle,rgba(255,226,122,.9) 0 1.5px,transparent 2.5px) 22% 88%/100% 100% no-repeat,
+    radial-gradient(circle,rgba(194,255,122,.9) 0 2px,transparent 3px) 45% 12%/100% 100% no-repeat,
+    radial-gradient(circle,rgba(255,255,255,.8) 0 1px,transparent 2px) 4% 35%/100% 100% no-repeat}
+header::after{content:"";position:absolute;inset:0;pointer-events:none;
+  background-image:radial-gradient(rgba(255,255,255,.07) 1px,transparent 1.5px);background-size:6px 6px;
+  -webkit-mask-image:linear-gradient(90deg,transparent 30%,#000);mask-image:linear-gradient(90deg,transparent 30%,#000)}
+.hd{max-width:760px;margin:0 auto;position:relative;z-index:1;min-height:170px}
+.brand{display:flex;align-items:center;gap:12px;position:relative;z-index:2}
+.logo{width:44px;height:44px;border-radius:14px;background:rgba(255,255,255,.08);border:1.5px solid rgba(255,122,224,.7);box-shadow:0 0 14px rgba(255,79,216,.55),inset 0 0 10px rgba(255,79,216,.35);display:grid;place-items:center;font-size:22px}
+header h1{margin:0;font-size:24px;font-weight:800;letter-spacing:-.01em;text-shadow:0 0 8px rgba(255,122,224,.9),0 0 22px rgba(168,85,247,.8),0 0 40px rgba(56,189,248,.5)}
+header p{margin:2px 0 0;font-size:13px;color:#c9d9ff;text-shadow:0 0 8px rgba(56,189,248,.7)}
+.toys{position:absolute;right:-8px;bottom:-14px;height:178px;width:auto;aspect-ratio:380/220;pointer-events:none}
+@media (min-width:640px){.hd{min-height:190px}.toys{height:210px;bottom:-18px}header h1{font-size:28px}}
 
-main{max-width:760px;margin:-44px auto 0;padding:0 16px;position:relative;z-index:2}
+main{max-width:760px;margin:-22px auto 0;padding:0 16px;position:relative;z-index:2}
 section{animation:fade .25s ease}
 @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 
@@ -112,6 +125,64 @@ summary::after{content:" ▾"}details[open] summary::after{content:" ▴"}
 .empty div{font-size:40px;margin-bottom:6px}
 
 .hide{display:none!important}
+
+/* ===== estética LED ===== */
+body{background:
+  radial-gradient(600px 400px at 0% 30%,rgba(168,85,247,.10),transparent 70%),
+  radial-gradient(600px 400px at 100% 70%,rgba(56,225,255,.08),transparent 70%),
+  #000;background-attachment:fixed}
+header{border-bottom:1px solid rgba(255,79,216,.5);box-shadow:0 1px 0 rgba(56,225,255,.35),0 10px 40px -10px rgba(255,79,216,.45)}
+header{background-color:#000}
+.card{position:relative;background:linear-gradient(180deg,#0e0b18,#08060f);border-color:#231b38}
+.card::before{content:"";position:absolute;inset:-1px;border-radius:inherit;padding:1px;pointer-events:none;
+  background:linear-gradient(135deg,rgba(255,79,216,.55),rgba(168,85,247,.15) 35%,rgba(56,225,255,.0) 60%,rgba(56,225,255,.45));
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude}
+.card h2{text-shadow:0 0 10px rgba(209,107,255,.35)}
+.ic{background:rgba(255,255,255,.04);border:1px solid rgba(209,107,255,.45);box-shadow:0 0 10px rgba(209,107,255,.35),inset 0 0 8px rgba(209,107,255,.2)}
+label{color:#b6aee0}
+input,select{background:#0a0812;border-color:#2a2244}
+input:focus,select:focus{background:#0d0a18;border-color:var(--neon-c);box-shadow:0 0 0 3px rgba(56,225,255,.15),0 0 16px rgba(56,225,255,.35)}
+input[type=date]::-webkit-calendar-picker-indicator{filter:invert(1) opacity(.7)}
+button{background:#0d0a18;border-color:#2c2347;color:var(--tx)}
+button:hover{border-color:rgba(209,107,255,.6);box-shadow:0 0 12px rgba(209,107,255,.25)}
+button.p{background:var(--grad);color:#fff;text-shadow:0 0 6px rgba(0,0,0,.35);box-shadow:0 0 18px rgba(255,79,216,.45),0 0 36px rgba(56,225,255,.2)}
+button.p:hover{box-shadow:0 0 24px rgba(255,79,216,.65),0 0 48px rgba(56,225,255,.3)}
+button.add{background:rgba(209,107,255,.06);border-color:var(--pri);color:var(--pri);text-shadow:0 0 8px rgba(209,107,255,.6)}
+button.x{background:none;box-shadow:none}
+nav{background:rgba(6,4,12,.82);border-color:rgba(209,107,255,.35);box-shadow:0 0 24px rgba(168,85,247,.3),0 10px 30px -10px #000}
+nav button{background:none;border:none}
+nav button:hover{box-shadow:none}
+nav button.act{background:rgba(209,107,255,.14);color:#f0c8ff;text-shadow:0 0 8px rgba(255,79,216,.8);box-shadow:inset 0 0 0 1px rgba(209,107,255,.5),0 0 14px rgba(209,107,255,.35)}
+nav button.act svg{filter:drop-shadow(0 0 4px rgba(255,79,216,.9))}
+.totbox,.saldo{background:#07050d;border:1px solid rgba(255,79,216,.55);box-shadow:0 0 0 1px rgba(56,225,255,.15) inset,0 0 26px rgba(255,79,216,.25),0 0 60px -10px rgba(56,225,255,.25);position:relative;overflow:hidden}
+.totbox::before,.saldo::before{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(circle at 0% 0%,rgba(255,79,216,.22),transparent 55%),radial-gradient(circle at 100% 100%,rgba(56,225,255,.18),transparent 55%)}
+.totbox>*,.saldo>*{position:relative}
+.tot,#m-saldo,.kbig{color:#fff;text-shadow:0 0 8px rgba(255,79,216,.9),0 0 22px rgba(168,85,247,.7),0 0 40px rgba(56,225,255,.4)}
+.saldo-det div{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08)}
+.saldo-det b{text-shadow:0 0 8px rgba(56,225,255,.6)}
+.tile{background:#0a0812;border:1px solid #2a2244}
+.tile b{text-shadow:0 0 10px currentColor}
+.tile.g{border-color:rgba(93,255,158,.45);box-shadow:0 0 16px rgba(93,255,158,.15)}
+.tile.b{border-color:rgba(79,210,255,.45);box-shadow:0 0 16px rgba(79,210,255,.15)}
+.tile.a{border-color:rgba(255,201,79,.45);box-shadow:0 0 16px rgba(255,201,79,.15)}
+.tile.r{border-color:rgba(255,92,138,.5);box-shadow:0 0 16px rgba(255,92,138,.18)}
+.tile.v{border-color:rgba(209,107,255,.5);box-shadow:0 0 16px rgba(209,107,255,.18)}
+.chip{border:1px solid rgba(209,107,255,.45);box-shadow:0 0 8px rgba(209,107,255,.25);color:#e9b8ff}
+.wval b,.grid .st{text-shadow:0 0 10px rgba(209,107,255,.7);color:#e6a8ff}
+.wtop:hover,.wrow.open .wtop{background:rgba(209,107,255,.07)}
+.dgrp{background:#0a0812;border:1px solid #221b36}
+.dtt{color:var(--neon-c);text-shadow:0 0 8px rgba(56,225,255,.6)}
+.chev{background:#0d0a18;border:1px solid #2a2244}
+.wrow.open .chev{border-color:rgba(209,107,255,.6);box-shadow:0 0 10px rgba(209,107,255,.4)}
+.acts button{background:#0d0a18;border:1px solid #2a2244}
+.list li{background:#0d0a18;border:1px solid #2a2244}
+.mi{border:1px solid rgba(255,201,79,.45);box-shadow:0 0 10px rgba(255,201,79,.2)}
+.mi.transferencia{border-color:rgba(79,210,255,.45);box-shadow:0 0 10px rgba(79,210,255,.2)}
+.mv{text-shadow:0 0 8px rgba(255,92,138,.6)}
+.editbar{border:1px solid rgba(255,201,79,.45)}
+.msg:not(:empty){border:1px solid rgba(255,92,138,.4)}
+summary{color:var(--neon-c)}
+::selection{background:rgba(255,79,216,.4)}
 /* consulta */
 .kbig{font-size:34px;font-weight:800;letter-spacing:-.03em;margin:4px 0 16px}
 .fhd{display:flex;justify-content:space-between;align-items:center}
@@ -198,8 +269,85 @@ table.grid{width:100%;border-collapse:separate;border-spacing:0;font-size:14px;w
 <body>
 <header>
   <div class="hd">
-    <div class="logo">✨</div>
-    <div><h1>Luminosos</h1><p>Fechamento semanal</p></div>
+    <div class="brand">
+      <div class="logo">✨</div>
+      <div><h1>Luminosos</h1><p>Fechamento semanal</p></div>
+    </div>
+    <svg class="toys" viewBox="0 0 380 220" aria-hidden="true">
+      <defs>
+        <filter id="nb" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="2.6" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+        <filter id="halo" x="-100%" y="-100%" width="300%" height="300%"><feGaussianBlur stdDeviation="9"/></filter>
+        <linearGradient id="rb" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#ff4fd8"/><stop offset=".25" stop-color="#ffd84f"/><stop offset=".5" stop-color="#4fff8a"/><stop offset=".75" stop-color="#4fd8ff"/><stop offset="1" stop-color="#a04fff"/>
+        </linearGradient>
+        <path id="sp" d="M0-7 1.4-1.4 7 0 1.4 1.4 0 7-1.4 1.4-7 0-1.4-1.4Z" fill="#fff"/>
+      </defs>
+
+      <!-- espada pixel -->
+      <line x1="24" y1="200" x2="150" y2="74" stroke="#38bdf8" stroke-width="30" stroke-linecap="round" opacity=".45" filter="url(#halo)"/>
+      <g id="sword" transform="translate(18,206)" filter="url(#nb)"></g>
+
+      <!-- varinha dino -->
+      <g transform="rotate(-7 215 120)">
+        <circle cx="215" cy="64" r="46" fill="none" stroke="url(#rb)" stroke-width="16" opacity=".55" filter="url(#halo)"/>
+        <circle cx="215" cy="64" r="44" fill="rgba(255,255,255,.05)" stroke="url(#rb)" stroke-width="4.5" filter="url(#nb)"/>
+        <g fill="#fff" filter="url(#nb)">
+          <circle cx="215" cy="20" r="2.2"/><circle cx="259" cy="64" r="2.2"/><circle cx="171" cy="64" r="2.2"/><circle cx="246" cy="33" r="1.8"/><circle cx="184" cy="33" r="1.8"/><circle cx="246" cy="95" r="1.8"/><circle cx="184" cy="95" r="1.8"/>
+        </g>
+        <g fill="#8dff4f" stroke="#e1ffb8" stroke-width="1.4" filter="url(#nb)">
+          <path d="M203 82 Q187 92 184 74 Q194 86 206 78Z"/>
+          <ellipse cx="213" cy="76" rx="12" ry="15"/>
+          <circle cx="221" cy="51" r="11"/>
+          <ellipse cx="229" cy="56" rx="8" ry="6"/>
+          <path d="M209 40l3-7 3 6M203 50l-1-7 5 4M203 62l-5-5 6 1" stroke-linejoin="round"/>
+          <path d="M222 74l6 2M222 80l5 3" fill="none"/>
+        </g>
+        <circle cx="225" cy="48" r="2.2" fill="#0b2a05"/>
+        <g fill="#5fd630" stroke="#d2ff9e" stroke-width="1.4" filter="url(#nb)">
+          <path d="M207 112 Q174 104 170 62 Q182 94 209 100Z"/>
+          <path d="M223 112 Q256 104 260 62 Q248 94 221 100Z"/>
+          <rect x="203" y="96" width="24" height="18" rx="5"/>
+        </g>
+        <circle cx="215" cy="124" r="13" fill="#173a0c" stroke="#8dff4f" stroke-width="2.4" filter="url(#nb)"/>
+        <circle cx="215" cy="124" r="6" fill="#fffbd1" filter="url(#nb)"/>
+        <circle cx="215" cy="124" r="14" fill="#fff36b" opacity=".5" filter="url(#halo)"/>
+        <rect x="206" y="137" width="18" height="84" rx="8" fill="#4c9a22" stroke="#b6ff7a" stroke-width="2" filter="url(#nb)"/>
+        <path d="M206 160h18M206 168h18M206 176h18" stroke="#2c6110" stroke-width="2.4"/>
+      </g>
+
+      <!-- cata-vento peixe -->
+      <ellipse cx="322" cy="46" rx="34" ry="24" fill="#ff7a1a" opacity=".55" filter="url(#halo)"/>
+      <g filter="url(#nb)">
+        <path d="M330 24 Q356 4 368 16 M330 24 Q302 2 292 14" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/>
+        <g transform="rotate(-14 322 48)">
+          <path d="M296 48 L282 36 L284 60Z" fill="#ff5a0a" stroke="#ffc48a" stroke-width="1.4"/>
+          <ellipse cx="322" cy="48" rx="27" ry="15" fill="#ff6a12" stroke="#ffc48a" stroke-width="1.6"/>
+          <path d="M316 34 Q324 24 332 34" fill="#ff8a3a" stroke="#ffc48a" stroke-width="1.2"/>
+          <circle cx="338" cy="45" r="3" fill="#fff"/><circle cx="339" cy="45" r="1.4" fill="#300"/>
+          <path d="M314 42 Q310 48 314 54 M306 42 Q302 48 306 54" fill="none" stroke="#ffd0a0" stroke-width="1.2"/>
+        </g>
+        <polyline points="322,66 316,71 328,76 316,81 328,86 316,91 328,96 316,101 328,106 322,110" fill="none" stroke="#e8eef7" stroke-width="2"/>
+      </g>
+      <circle cx="322" cy="150" r="22" fill="#3b82f6" opacity=".5" filter="url(#halo)"/>
+      <g fill="#2563eb" stroke="#93c5fd" stroke-width="1.8" filter="url(#nb)">
+        <circle cx="309" cy="120" r="9"/><circle cx="335" cy="120" r="9"/>
+        <path d="M313 112 Q322 104 331 112 L331 130 Q326 136 322 142 Q318 136 313 130Z"/>
+        <path d="M313 138 L331 138 L329 214 Q322 222 315 214Z"/>
+      </g>
+      <path d="M318 152h8M318 162h8M318 172h8" stroke="#bfdbfe" stroke-width="1.6" opacity=".7"/>
+      <circle cx="322" cy="124" r="3" fill="#fff" filter="url(#nb)"/>
+
+      <!-- brilhos -->
+      <g filter="url(#nb)">
+        <use href="#sp" transform="translate(270 22) scale(.9)"/>
+        <use href="#sp" transform="translate(160 18) scale(.6)"/>
+        <use href="#sp" transform="translate(365 92) scale(.7)"/>
+        <use href="#sp" transform="translate(110 70) scale(.5)"/>
+        <use href="#sp" transform="translate(272 168) scale(.55)"/>
+        <circle cx="140" cy="40" r="2" fill="#ff7ae0"/><circle cx="280" cy="110" r="1.8" fill="#7ae8ff"/>
+        <circle cx="362" cy="150" r="2" fill="#c2ff7a"/><circle cx="60" cy="110" r="1.6" fill="#ffe27a"/>
+      </g>
+    </svg>
   </div>
 </header>
 <nav>
@@ -675,6 +823,17 @@ function registrarMov(tipo){
 }
 $('btn-m-compra').onclick=()=>registrarMov('compra');
 $('btn-m-transf').onclick=()=>registrarMov('transferencia');
+
+/* espada pixel do banner */
+(function(){
+  const cells=[],add=(x,y,c)=>cells.push(`<rect x="${x*8}" y="${y*8-8}" width="8" height="8" fill="${c}" stroke="rgba(5,20,60,.55)" stroke-width=".8"/>`);
+  [[-1,1],[0,1],[-1,0]].forEach(([x,y])=>add(x,y,'#3b82f6'));
+  for(let k=0;k<4;k++)add(k,-k,'#1d4ed8');
+  for(let j=-2;j<=2;j++)add(4+j,-4+j,j?'#38bdf8':'#7dd3fc');
+  for(let k=5;k<=14;k++){add(k+1,-k,'#3aa8ff');add(k,-k-1,'#3aa8ff');add(k,-k,'#e2fbff');}
+  add(15,-15,'#e2fbff');
+  $('sword').innerHTML=cells.join('');
+})();
 
 load();resetFechar();refreshFecharLists();
 if(!db.comissionados.length&&!db.fechamentos.length&&!db.config.gerenteNome){document.querySelector('nav [data-t=cadastros]').click();}
