@@ -248,6 +248,7 @@ function load(){
   try{db=JSON.parse(localStorage.getItem(KEY))}catch(e){}
   db=Object.assign({config:{precoVenda:50,taxaCartao:0,mult:15,gerenteNome:'',gerenteValor:0},comissionados:[],cidades:[],fechamentos:[]},db||{});
   if(db.config.mult==null) db.config.mult=15;
+  db.fechamentos.forEach(f=>Object.assign(f,calc(f,f.config)));
 }
 function save(){try{localStorage.setItem(KEY,JSON.stringify(db))}catch(e){alert('Não foi possível salvar no navegador.')}}
 
@@ -327,12 +328,13 @@ $('f-cartao').oninput=updTotal;$('f-dinheiro').oninput=updTotal;
 function calc(f,c){
   const total=r2(f.cartao+f.dinheiro);
   const totCom=f.comissoes.reduce((s,x)=>s+x.valor,0);
+  const material=c.precoVenda>0?r2(total/c.precoVenda*c.mult):0;
   return {
     total,
     brinquedos:c.precoVenda>0?total/c.precoVenda:0,
-    material:c.precoVenda>0?r2(total/c.precoVenda*c.mult):0,
+    material,
     caixa:r2(f.dinheiro-totCom-f.gerente.valor),
-    santander:r2(f.cartao*(1-c.taxaCartao/100)),
+    santander:r2(f.cartao*(1-c.taxaCartao/100)-material),
     totCom:r2(totCom)
   };
 }
@@ -368,9 +370,9 @@ $('btn-fechar').onclick=()=>{
     <div class="tile v"><span class="t">💰 Total vendido</span><b>${fmt(f.total)}</b></div>
     <div class="tile"><span class="t">🎈 Brinquedos vendidos</span><b>${f.brinquedos.toLocaleString('pt-BR',{maximumFractionDigits:1})}</b></div>
     <div class="tile a"><span class="t">🛒 Transferir p/ material</span><b>${fmt(f.material)}</b></div>
-    <div class="tile b"><span class="t">🏦 Transferir Santander</span><b>${fmt(f.santander)}</b></div>
+    <div class="tile ${f.santander<0?'r':'b'}"><span class="t">🏦 Transferir Santander</span><b>${fmt(f.santander)}</b></div>
     <div class="tile ${f.caixa<0?'r':'g'}"><span class="t">💵 Saldo em dinheiro – caixa</span><b>${fmt(f.caixa)}</b></div>`;
-  $('f-res-nota').textContent=`Caixa = dinheiro − comissões (${fmt(f.totCom)}) − gerente (${fmt(f.gerente.valor)}). Santander = cartão − ${f.config.taxaCartao}% de taxa. Fechamento salvo na Consulta.`;
+  $('f-res-nota').textContent=`Caixa = dinheiro − comissões (${fmt(f.totCom)}) − gerente (${fmt(f.gerente.valor)}). Santander = cartão − ${f.config.taxaCartao}% de taxa − compra de material. Fechamento salvo na Consulta.`;
   $('f-res').classList.remove('hide');$('btn-fechar').disabled=true;
   $('f-res').scrollIntoView({behavior:'smooth'});
 };
