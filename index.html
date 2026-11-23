@@ -1,0 +1,329 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Luminosos – Fechamentos</title>
+<style>
+:root{--bg:#f5f3fb;--card:#fff;--tx:#1f1b2e;--mut:#6b6780;--pri:#6d3fd8;--pri2:#ede6fd;--ok:#14855f;--bad:#c03a3a;--bd:#e3dff0}
+@media (prefers-color-scheme:dark){:root{--bg:#14121c;--card:#1e1b2a;--tx:#ece9f5;--mut:#a29db8;--pri:#a685ff;--pri2:#2c2540;--ok:#3ccf98;--bad:#ff7b7b;--bd:#332e45}}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--tx);font-size:16px}
+header{background:var(--pri);color:#fff;padding:14px 16px}
+header h1{margin:0;font-size:20px}
+nav{display:flex;gap:6px;padding:10px 16px;background:var(--card);border-bottom:1px solid var(--bd);position:sticky;top:0;z-index:5;overflow-x:auto}
+nav button{flex:1;white-space:nowrap}
+main{max-width:820px;margin:0 auto;padding:16px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:16px;margin-bottom:16px}
+.card h2{margin:0 0 12px;font-size:17px}
+label{display:block;font-size:13px;color:var(--mut);margin:10px 0 4px}
+input,select{width:100%;padding:10px;border:1px solid var(--bd);border-radius:8px;background:var(--bg);color:var(--tx);font-size:16px}
+.row{display:flex;gap:10px;flex-wrap:wrap}.row>*{flex:1;min-width:130px}
+button{padding:10px 14px;border-radius:8px;border:1px solid var(--pri);background:var(--card);color:var(--pri);font-size:15px;cursor:pointer;font-weight:600}
+button.p{background:var(--pri);color:#fff}
+button.act{background:var(--pri);color:#fff}
+button.x{border:none;background:none;color:var(--bad);padding:6px 10px;font-size:18px}
+button.sm{padding:6px 10px;font-size:13px}
+.list{list-style:none;padding:0;margin:8px 0}
+.list li{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--bd)}
+.tot{font-size:22px;font-weight:700;color:var(--pri)}
+.res div{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--bd)}
+.res b{font-size:18px}
+.mut{color:var(--mut);font-size:13px}
+.com{display:flex;gap:8px;align-items:flex-end;margin-bottom:6px}.com select{flex:2}.com input{flex:1}
+.wk h3{margin:0;font-size:16px}
+.kpi{display:flex;gap:10px;flex-wrap:wrap;margin:10px 0}
+.kpi div{flex:1;min-width:120px;background:var(--pri2);border-radius:8px;padding:8px 10px}
+.kpi span{display:block;font-size:12px;color:var(--mut)}.kpi strong{font-size:17px}
+table{width:100%;border-collapse:collapse;font-size:14px}td{padding:6px 0;border-bottom:1px solid var(--bd)}td:last-child{text-align:right}
+.hide{display:none}
+.msg{color:var(--bad);font-size:14px;margin-top:8px}
+</style>
+</head>
+<body>
+<header><h1>✨ Luminosos – Fechamentos</h1></header>
+<nav>
+  <button data-t="fechar" class="act">Fechar semana</button>
+  <button data-t="consulta">Consulta</button>
+  <button data-t="cadastros">Cadastros</button>
+</nav>
+<main>
+
+<!-- FECHAR SEMANA -->
+<section id="t-fechar">
+  <div class="card">
+    <h2>Registrar fechamento da semana</h2>
+    <div class="row">
+      <div><label>Data início</label><input type="date" id="f-ini"></div>
+      <div><label>Data fim</label><input type="date" id="f-fim"></div>
+    </div>
+    <label>Cidade</label>
+    <input id="f-cidade" list="dl-cidades" placeholder="Digite ou escolha a cidade">
+    <datalist id="dl-cidades"></datalist>
+    <div class="row">
+      <div><label>Vendido no cartão (R$)</label><input type="number" step="0.01" min="0" inputmode="decimal" id="f-cartao"></div>
+      <div><label>Vendido em dinheiro (R$)</label><input type="number" step="0.01" min="0" inputmode="decimal" id="f-dinheiro"></div>
+    </div>
+    <label>Total vendido</label>
+    <div class="tot" id="f-total">R$ 0,00</div>
+  </div>
+
+  <div class="card">
+    <h2>Gerente</h2>
+    <div class="row">
+      <div><label>Nome</label><input id="f-ger-nome"></div>
+      <div><label>Valor da semana (R$)</label><input type="number" step="0.01" min="0" inputmode="decimal" id="f-ger-valor"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Comissões</h2>
+    <div id="f-coms"></div>
+    <button id="btn-add-com" class="sm">+ Comissão</button>
+    <p class="mut" id="no-com-msg"></p>
+  </div>
+
+  <button class="p" style="width:100%;padding:14px;font-size:17px" id="btn-fechar">Fechar semana</button>
+  <div class="msg" id="f-msg"></div>
+
+  <div class="card hide" id="f-res" style="margin-top:16px">
+    <h2>Resultado do fechamento</h2>
+    <div class="res" id="f-res-body"></div>
+    <p class="mut">Fechamento salvo. Veja na aba Consulta.</p>
+    <button id="btn-novo">Novo fechamento</button>
+  </div>
+</section>
+
+<!-- CONSULTA -->
+<section id="t-consulta" class="hide">
+  <div class="card">
+    <h2>Semanas fechadas</h2>
+    <label>Filtrar por cidade</label>
+    <select id="c-filtro"></select>
+  </div>
+  <div id="c-lista"></div>
+</section>
+
+<!-- CADASTROS -->
+<section id="t-cadastros" class="hide">
+  <div class="card">
+    <h2>Parâmetros</h2>
+    <div class="row">
+      <div><label>Valor de venda do brinquedo (R$)</label><input type="number" step="0.01" min="0" id="p-preco"></div>
+      <div><label>Taxa média do cartão (%)</label><input type="number" step="0.01" min="0" id="p-taxa"></div>
+    </div>
+    <label>Multiplicador p/ compra de material</label>
+    <input type="number" step="0.01" min="0" id="p-mult">
+    <p class="mut">Material = (total ÷ valor de venda) × multiplicador</p>
+  </div>
+  <div class="card">
+    <h2>Gerente</h2>
+    <div class="row">
+      <div><label>Nome</label><input id="p-ger-nome"></div>
+      <div><label>Valor fixo semanal (R$)</label><input type="number" step="0.01" min="0" id="p-ger-valor"></div>
+    </div>
+  </div>
+  <button class="p" id="btn-salvar-par" style="width:100%;margin-bottom:16px">Salvar parâmetros</button>
+
+  <div class="card">
+    <h2>Comissionados</h2>
+    <div class="row" style="align-items:flex-end">
+      <div style="flex:3"><input id="p-com-nome" placeholder="Nome do comissionado"></div>
+      <div style="flex:1;min-width:90px"><button class="p" id="btn-add-comi" style="width:100%">Adicionar</button></div>
+    </div>
+    <ul class="list" id="p-com-lista"></ul>
+  </div>
+  <div class="card">
+    <h2>Cidades</h2>
+    <div class="row" style="align-items:flex-end">
+      <div style="flex:3"><input id="p-cid-nome" placeholder="Nome da cidade"></div>
+      <div style="flex:1;min-width:90px"><button class="p" id="btn-add-cid" style="width:100%">Adicionar</button></div>
+    </div>
+    <ul class="list" id="p-cid-lista"></ul>
+  </div>
+  <div class="card">
+    <h2>Backup</h2>
+    <p class="mut">Os dados ficam salvos neste aparelho/navegador. Exporte um backup de vez em quando ou para passar para outro aparelho.</p>
+    <div class="row">
+      <button id="btn-exp">Exportar backup</button>
+      <button id="btn-imp">Importar backup</button>
+    </div>
+    <input type="file" id="imp-file" accept=".json" class="hide">
+  </div>
+</section>
+</main>
+
+<script>
+const KEY='luminosos-v1';
+const fmt=v=>(Number(v)||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+const fmtD=d=>d?d.split('-').reverse().join('/'):'';
+const num=id=>parseFloat(document.getElementById(id).value)||0;
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const r2=v=>Math.round(v*100)/100;
+
+let db;
+function load(){
+  try{db=JSON.parse(localStorage.getItem(KEY))}catch(e){}
+  db=Object.assign({config:{precoVenda:50,taxaCartao:0,mult:15,gerenteNome:'',gerenteValor:0},comissionados:[],cidades:[],fechamentos:[]},db||{});
+  if(db.config.mult==null) db.config.mult=15;
+}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(db))}catch(e){alert('Não foi possível salvar no navegador.')}}
+
+/* navegação */
+document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('nav button').forEach(x=>x.classList.toggle('act',x===b));
+  ['fechar','consulta','cadastros'].forEach(t=>$('t-'+t).classList.toggle('hide',t!==b.dataset.t));
+  if(b.dataset.t==='consulta') renderConsulta();
+  if(b.dataset.t==='cadastros') renderCadastros();
+  if(b.dataset.t==='fechar') refreshFecharLists();
+});
+
+/* CADASTROS */
+function renderCadastros(){
+  const c=db.config;
+  $('p-preco').value=c.precoVenda; $('p-taxa').value=c.taxaCartao; $('p-mult').value=c.mult;
+  $('p-ger-nome').value=c.gerenteNome; $('p-ger-valor').value=c.gerenteValor;
+  $('p-com-lista').innerHTML=db.comissionados.map((n,i)=>`<li>${esc(n)}<button class="x" data-i="${i}" data-k="comissionados">✕</button></li>`).join('')||'<li class="mut">Nenhum cadastrado</li>';
+  $('p-cid-lista').innerHTML=db.cidades.map((n,i)=>`<li>${esc(n)}<button class="x" data-i="${i}" data-k="cidades">✕</button></li>`).join('')||'<li class="mut">Nenhuma cadastrada</li>';
+  document.querySelectorAll('#t-cadastros .x').forEach(b=>b.onclick=()=>{
+    if(!confirm('Remover "'+db[b.dataset.k][b.dataset.i]+'"?'))return;
+    db[b.dataset.k].splice(b.dataset.i,1);save();renderCadastros();
+  });
+}
+$('btn-salvar-par').onclick=()=>{
+  Object.assign(db.config,{precoVenda:num('p-preco'),taxaCartao:num('p-taxa'),mult:num('p-mult'),gerenteNome:$('p-ger-nome').value.trim(),gerenteValor:num('p-ger-valor')});
+  save();alert('Parâmetros salvos!');
+};
+function addTo(k,inp){const v=$(inp).value.trim();if(!v)return;
+  if(!db[k].some(x=>x.toLowerCase()===v.toLowerCase())){db[k].push(v);db[k].sort((a,b)=>a.localeCompare(b,'pt-BR'));save();}
+  $(inp).value='';renderCadastros();}
+$('btn-add-comi').onclick=()=>addTo('comissionados','p-com-nome');
+$('btn-add-cid').onclick=()=>addTo('cidades','p-cid-nome');
+$('p-com-nome').onkeydown=e=>{if(e.key==='Enter')addTo('comissionados','p-com-nome')};
+$('p-cid-nome').onkeydown=e=>{if(e.key==='Enter')addTo('cidades','p-cid-nome')};
+
+$('btn-exp').onclick=()=>{
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([JSON.stringify(db,null,2)],{type:'application/json'}));
+  a.download='luminosos-backup-'+new Date().toISOString().slice(0,10)+'.json';a.click();
+};
+$('btn-imp').onclick=()=>$('imp-file').click();
+$('imp-file').onchange=e=>{
+  const f=e.target.files[0];if(!f)return;
+  f.text().then(t=>{try{const d=JSON.parse(t);if(!d.fechamentos)throw 0;
+    if(!confirm('Substituir os dados atuais pelo backup?'))return;
+    localStorage.setItem(KEY,t);load();renderCadastros();alert('Backup importado!');}catch(x){alert('Arquivo inválido.')}});
+  e.target.value='';
+};
+
+/* FECHAR SEMANA */
+function refreshFecharLists(){
+  $('dl-cidades').innerHTML=db.cidades.map(c=>`<option value="${esc(c)}">`).join('');
+  $('no-com-msg').textContent=db.comissionados.length?'':'Cadastre os comissionados na aba Cadastros.';
+  document.querySelectorAll('#f-coms select').forEach(s=>{const v=s.value;s.innerHTML=comOptions();s.value=v;});
+}
+const comOptions=()=>'<option value="">Selecione…</option>'+db.comissionados.map(n=>`<option>${esc(n)}</option>`).join('');
+function addComRow(){
+  const d=document.createElement('div');d.className='com';
+  d.innerHTML=`<select>${comOptions()}</select><input type="number" step="0.01" min="0" inputmode="decimal" placeholder="Valor R$"><button class="x" title="Remover">✕</button>`;
+  d.querySelector('.x').onclick=()=>d.remove();
+  $('f-coms').appendChild(d);
+}
+$('btn-add-com').onclick=addComRow;
+function updTotal(){$('f-total').textContent=fmt(num('f-cartao')+num('f-dinheiro'))}
+$('f-cartao').oninput=updTotal;$('f-dinheiro').oninput=updTotal;
+
+function calc(f,c){
+  const total=r2(f.cartao+f.dinheiro);
+  const totCom=f.comissoes.reduce((s,x)=>s+x.valor,0);
+  return {
+    total,
+    brinquedos:c.precoVenda>0?total/c.precoVenda:0,
+    material:c.precoVenda>0?r2(total/c.precoVenda*c.mult):0,
+    caixa:r2(f.dinheiro-totCom-f.gerente.valor),
+    santander:r2(f.cartao*(1-c.taxaCartao/100)),
+    totCom:r2(totCom)
+  };
+}
+function resetFechar(){
+  ['f-ini','f-fim','f-cidade','f-cartao','f-dinheiro'].forEach(i=>$(i).value='');
+  $('f-ger-nome').value=db.config.gerenteNome;$('f-ger-valor').value=db.config.gerenteValor||'';
+  $('f-coms').innerHTML='';updTotal();$('f-res').classList.add('hide');$('f-msg').textContent='';
+  $('btn-fechar').disabled=false;
+}
+$('btn-novo').onclick=()=>{resetFechar();scrollTo(0,0)};
+
+$('btn-fechar').onclick=()=>{
+  const ini=$('f-ini').value,fim=$('f-fim').value,cidade=$('f-cidade').value.trim();
+  const msg=[];
+  if(!ini||!fim)msg.push('Informe as datas de início e fim.');
+  else if(fim<ini)msg.push('Data fim antes da data início.');
+  if(!cidade)msg.push('Informe a cidade.');
+  if(!(db.config.precoVenda>0))msg.push('Cadastre o valor de venda do brinquedo na aba Cadastros.');
+  const comissoes=[];
+  document.querySelectorAll('#f-coms .com').forEach(r=>{
+    const n=r.querySelector('select').value,v=parseFloat(r.querySelector('input').value)||0;
+    if(n||v){if(!n)msg.push('Selecione o comissionado em todas as comissões.');else comissoes.push({nome:n,valor:v});}
+  });
+  if(msg.length){$('f-msg').innerHTML=[...new Set(msg)].join('<br>');return;}
+  $('f-msg').textContent='';
+  if(!db.cidades.some(c=>c.toLowerCase()===cidade.toLowerCase())){db.cidades.push(cidade);db.cidades.sort((a,b)=>a.localeCompare(b,'pt-BR'));}
+  const f={id:Date.now(),inicio:ini,fim,cidade,cartao:num('f-cartao'),dinheiro:num('f-dinheiro'),
+    gerente:{nome:$('f-ger-nome').value.trim()||'Gerente',valor:num('f-ger-valor')},comissoes,
+    config:{...db.config}};
+  Object.assign(f,calc(f,f.config));
+  db.fechamentos.push(f);save();refreshFecharLists();
+  $('f-res-body').innerHTML=`
+    <div><span>Total vendido</span><b>${fmt(f.total)}</b></div>
+    <div><span>Brinquedos vendidos</span><b>${f.brinquedos.toLocaleString('pt-BR',{maximumFractionDigits:1})}</b></div>
+    <div><span>🛒 Transferir p/ compra de material</span><b>${fmt(f.material)}</b></div>
+    <div><span>💵 Saldo em dinheiro – caixa</span><b style="color:${f.caixa<0?'var(--bad)':'var(--ok)'}">${fmt(f.caixa)}</b></div>
+    <div><span>🏦 Transferir Santander</span><b>${fmt(f.santander)}</b></div>
+    <p class="mut">Caixa = dinheiro − comissões (${fmt(f.totCom)}) − gerente (${fmt(f.gerente.valor)}). Santander = cartão − ${f.config.taxaCartao}% de taxa.</p>`;
+  $('f-res').classList.remove('hide');$('btn-fechar').disabled=true;
+  $('f-res').scrollIntoView({behavior:'smooth'});
+};
+
+/* CONSULTA */
+function renderConsulta(){
+  const cs=[...new Set(db.fechamentos.map(f=>f.cidade))].sort();
+  const cur=$('c-filtro').value;
+  $('c-filtro').innerHTML='<option value="">Todas</option>'+cs.map(c=>`<option>${esc(c)}</option>`).join('');
+  $('c-filtro').value=cs.includes(cur)?cur:'';
+  const lst=db.fechamentos.filter(f=>!$('c-filtro').value||f.cidade===$('c-filtro').value)
+    .sort((a,b)=>b.inicio.localeCompare(a.inicio));
+  if(!lst.length){$('c-lista').innerHTML='<div class="card mut">Nenhuma semana fechada ainda.</div>';return;}
+  $('c-lista').innerHTML=lst.map(f=>{
+    const pag=[...f.comissoes.map(c=>[c.nome,c.valor]),...(f.gerente.valor?[[f.gerente.nome+' (gerente)',f.gerente.valor]]:[])];
+    return `<div class="card wk">
+      <div style="display:flex;justify-content:space-between;align-items:start">
+        <div><h3>${fmtD(f.inicio)} a ${fmtD(f.fim)}</h3><div class="mut">📍 ${esc(f.cidade)}</div></div>
+        <button class="x" data-id="${f.id}" title="Excluir">🗑</button>
+      </div>
+      <div class="kpi">
+        <div><span>Brinquedos vendidos</span><strong>${f.brinquedos.toLocaleString('pt-BR',{maximumFractionDigits:1})}</strong></div>
+        <div><span>Total vendido</span><strong>${fmt(f.total)}</strong></div>
+      </div>
+      <table>${pag.map(([n,v])=>`<tr><td>${esc(n)}</td><td>${fmt(v)}</td></tr>`).join('')||'<tr><td class="mut">Sem comissões</td><td></td></tr>'}</table>
+      <details style="margin-top:8px"><summary class="mut">Mais detalhes</summary>
+        <table>
+          <tr><td>Cartão</td><td>${fmt(f.cartao)}</td></tr>
+          <tr><td>Dinheiro</td><td>${fmt(f.dinheiro)}</td></tr>
+          <tr><td>Compra de material</td><td>${fmt(f.material)}</td></tr>
+          <tr><td>Saldo caixa</td><td>${fmt(f.caixa)}</td></tr>
+          <tr><td>Santander</td><td>${fmt(f.santander)}</td></tr>
+        </table></details>
+    </div>`}).join('');
+  document.querySelectorAll('#c-lista .x').forEach(b=>b.onclick=()=>{
+    if(!confirm('Excluir este fechamento?'))return;
+    db.fechamentos=db.fechamentos.filter(f=>f.id!=b.dataset.id);save();renderConsulta();
+  });
+}
+$('c-filtro').onchange=renderConsulta;
+
+load();resetFechar();refreshFecharLists();
+if(!db.comissionados.length&&!db.fechamentos.length&&!db.config.gerenteNome){document.querySelector('nav [data-t=cadastros]').click();}
+</script>
+</body>
+</html>
