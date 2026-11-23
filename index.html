@@ -4,55 +4,136 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Luminosos – Fechamentos</title>
+<meta name="theme-color" content="#7c3aed">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#f5f3fb;--card:#fff;--tx:#1f1b2e;--mut:#6b6780;--pri:#6d3fd8;--pri2:#ede6fd;--ok:#14855f;--bad:#c03a3a;--bd:#e3dff0}
-@media (prefers-color-scheme:dark){:root{--bg:#14121c;--card:#1e1b2a;--tx:#ece9f5;--mut:#a29db8;--pri:#a685ff;--pri2:#2c2540;--ok:#3ccf98;--bad:#ff7b7b;--bd:#332e45}}
-*{box-sizing:border-box}
-body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--tx);font-size:16px}
-header{background:var(--pri);color:#fff;padding:14px 16px}
-header h1{margin:0;font-size:20px}
-nav{display:flex;gap:6px;padding:10px 16px;background:var(--card);border-bottom:1px solid var(--bd);position:sticky;top:0;z-index:5;overflow-x:auto}
-nav button{flex:1;white-space:nowrap}
-main{max-width:820px;margin:0 auto;padding:16px}
-.card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:16px;margin-bottom:16px}
-.card h2{margin:0 0 12px;font-size:17px}
-label{display:block;font-size:13px;color:var(--mut);margin:10px 0 4px}
-input,select{width:100%;padding:10px;border:1px solid var(--bd);border-radius:8px;background:var(--bg);color:var(--tx);font-size:16px}
-.row{display:flex;gap:10px;flex-wrap:wrap}.row>*{flex:1;min-width:130px}
-button{padding:10px 14px;border-radius:8px;border:1px solid var(--pri);background:var(--card);color:var(--pri);font-size:15px;cursor:pointer;font-weight:600}
-button.p{background:var(--pri);color:#fff}
-button.act{background:var(--pri);color:#fff}
-button.x{border:none;background:none;color:var(--bad);padding:6px 10px;font-size:18px}
-button.sm{padding:6px 10px;font-size:13px}
-.list{list-style:none;padding:0;margin:8px 0}
-.list li{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--bd)}
-.tot{font-size:22px;font-weight:700;color:var(--pri)}
-.res div{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--bd)}
-.res b{font-size:18px}
+:root{
+  --bg:#f6f4fb;--card:#ffffff;--tx:#191526;--mut:#77718c;--bd:#ebe7f5;--field:#f4f1fa;
+  --pri:#7c3aed;--pri-2:#db2777;--pri-soft:#f1eafe;
+  --ok:#059669;--ok-soft:#e7f8f1;--bad:#e11d48;--bad-soft:#fde8ee;--blue:#2563eb;--blue-soft:#e8effd;--amb:#d97706;--amb-soft:#fdf3e3;
+  --grad:linear-gradient(135deg,#7c3aed 0%,#c026d3 55%,#db2777 100%);
+  --sh:0 1px 2px rgba(24,16,48,.04),0 8px 24px -8px rgba(24,16,48,.10);
+  --r:20px;
+}
+@media (prefers-color-scheme:dark){:root{
+  --bg:#0f0d16;--card:#1a1724;--tx:#f1eef8;--mut:#9c96b2;--bd:#2a2638;--field:#221e2f;
+  --pri:#a78bfa;--pri-soft:#2a2242;--ok:#34d399;--ok-soft:#10291f;--bad:#fb7185;--bad-soft:#341620;
+  --blue:#7aa2ff;--blue-soft:#18213a;--amb:#fbbf24;--amb-soft:#2e2312;
+  --sh:0 1px 2px rgba(0,0,0,.3),0 8px 24px -8px rgba(0,0,0,.5);
+}}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:"Plus Jakarta Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--tx);font-size:16px;-webkit-font-smoothing:antialiased;padding-bottom:96px}
+
+/* header */
+header{background:var(--grad);color:#fff;padding:22px 20px 64px;border-radius:0 0 28px 28px;position:relative;overflow:hidden}
+header::before,header::after{content:"";position:absolute;border-radius:50%;background:rgba(255,255,255,.12)}
+header::before{width:220px;height:220px;right:-60px;top:-90px}
+header::after{width:120px;height:120px;right:90px;bottom:-60px;background:rgba(255,255,255,.08)}
+.hd{max-width:760px;margin:0 auto;display:flex;align-items:center;gap:12px;position:relative;z-index:1}
+.logo{width:44px;height:44px;border-radius:14px;background:rgba(255,255,255,.2);display:grid;place-items:center;font-size:22px;backdrop-filter:blur(6px)}
+header h1{margin:0;font-size:21px;font-weight:800;letter-spacing:-.02em}
+header p{margin:2px 0 0;font-size:13px;opacity:.85}
+
+main{max-width:760px;margin:-44px auto 0;padding:0 16px;position:relative;z-index:2}
+section{animation:fade .25s ease}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+/* bottom nav */
+nav{position:fixed;left:50%;bottom:14px;transform:translateX(-50%);display:flex;gap:4px;padding:6px;background:color-mix(in srgb,var(--card) 88%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--bd);border-radius:22px;box-shadow:0 10px 30px -10px rgba(24,16,48,.35);z-index:20;width:min(440px,calc(100% - 32px))}
+nav button{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;border:none;background:none;color:var(--mut);padding:8px 4px;border-radius:16px;font-size:12px;font-weight:600;cursor:pointer;transition:all .2s}
+nav button svg{width:22px;height:22px}
+nav button.act{background:var(--pri-soft);color:var(--pri)}
+
+/* cards */
+.card{background:var(--card);border:1px solid var(--bd);border-radius:var(--r);padding:20px;margin-bottom:14px;box-shadow:var(--sh)}
+.card h2{margin:0 0 6px;font-size:16px;font-weight:700;display:flex;align-items:center;gap:10px;letter-spacing:-.01em}
+.ic{width:32px;height:32px;border-radius:10px;display:inline-grid;place-items:center;font-size:16px;background:var(--pri-soft);flex:none}
+
+label{display:block;font-size:12px;font-weight:600;color:var(--mut);margin:14px 0 6px;text-transform:uppercase;letter-spacing:.04em}
+input,select{width:100%;padding:13px 14px;border:1.5px solid transparent;border-radius:14px;background:var(--field);color:var(--tx);font:inherit;font-size:16px;transition:border-color .15s,box-shadow .15s,background .15s;appearance:none;-webkit-appearance:none}
+select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none' stroke='%2377718c' stroke-width='2'%3E%3Cpath d='M1 1l5 5 5-5'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:36px}
+input:focus,select:focus{outline:none;border-color:var(--pri);background:var(--card);box-shadow:0 0 0 4px var(--pri-soft)}
+input::placeholder{color:var(--mut);opacity:.7}
+.row{display:flex;gap:12px;flex-wrap:wrap}.row>*{flex:1;min-width:140px}
+
+button{font:inherit;padding:12px 16px;border-radius:14px;border:1.5px solid var(--bd);background:var(--card);color:var(--tx);font-size:15px;cursor:pointer;font-weight:600;transition:transform .1s,box-shadow .2s,background .2s}
+button:active{transform:scale(.97)}
+button.p{background:var(--grad);color:#fff;border:none;box-shadow:0 8px 20px -8px rgba(124,58,237,.6)}
+button.p:disabled{opacity:.5;box-shadow:none}
+button.x{border:none;background:none;color:var(--mut);padding:8px;font-size:16px;border-radius:10px;width:auto}
+button.x:hover{background:var(--bad-soft);color:var(--bad)}
+button.add{width:100%;border:1.5px dashed var(--pri);color:var(--pri);background:var(--pri-soft);margin-top:6px}
+.big{width:100%;padding:17px;font-size:17px;border-radius:18px}
+
+.list{list-style:none;padding:0;margin:12px 0 0;display:flex;flex-wrap:wrap;gap:8px}
+.list li{display:flex;align-items:center;gap:2px;padding:4px 4px 4px 14px;background:var(--field);border-radius:999px;font-size:14px;font-weight:500}
+.list li.mut{padding:8px 14px;background:none}
+.list li button.x{padding:4px 8px;font-size:12px}
+
+.totbox{margin-top:16px;background:var(--grad);color:#fff;border-radius:16px;padding:16px 18px;display:flex;justify-content:space-between;align-items:center}
+.totbox span{font-size:13px;opacity:.9;font-weight:600}
+.tot{font-size:26px;font-weight:800;letter-spacing:-.02em}
+
+.res{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin-top:10px}
+.tile{border-radius:16px;padding:16px;background:var(--field)}
+.tile .t{font-size:12px;font-weight:600;color:var(--mut);display:flex;align-items:center;gap:6px}
+.tile b{display:block;font-size:22px;font-weight:800;margin-top:6px;letter-spacing:-.02em}
+.tile.g{background:var(--ok-soft)}.tile.g b{color:var(--ok)}
+.tile.b{background:var(--blue-soft)}.tile.b b{color:var(--blue)}
+.tile.a{background:var(--amb-soft)}.tile.a b{color:var(--amb)}
+.tile.r{background:var(--bad-soft)}.tile.r b{color:var(--bad)}
+.tile.v{background:var(--pri-soft)}.tile.v b{color:var(--pri)}
+
 .mut{color:var(--mut);font-size:13px}
-.com{display:flex;gap:8px;align-items:flex-end;margin-bottom:6px}.com select{flex:2}.com input{flex:1}
-.wk h3{margin:0;font-size:16px}
-.kpi{display:flex;gap:10px;flex-wrap:wrap;margin:10px 0}
-.kpi div{flex:1;min-width:120px;background:var(--pri2);border-radius:8px;padding:8px 10px}
-.kpi span{display:block;font-size:12px;color:var(--mut)}.kpi strong{font-size:17px}
-table{width:100%;border-collapse:collapse;font-size:14px}td{padding:6px 0;border-bottom:1px solid var(--bd)}td:last-child{text-align:right}
-.hide{display:none}
-.msg{color:var(--bad);font-size:14px;margin-top:8px}
+.com{display:flex;gap:8px;align-items:center;margin-top:10px}.com select{flex:2}.com input{flex:1;min-width:0}
+
+.wk{padding:0;overflow:hidden}
+.wk-hd{display:flex;justify-content:space-between;align-items:center;padding:16px 16px 0 20px}
+.wk h3{margin:0;font-size:16px;font-weight:700}
+.chip{display:inline-flex;align-items:center;gap:4px;margin-top:6px;padding:4px 10px;border-radius:999px;background:var(--pri-soft);color:var(--pri);font-size:12px;font-weight:700}
+.wk-body{padding:0 20px 18px}
+.kpi{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0}
+.kpi div{border-radius:14px;padding:12px 14px;background:var(--field)}
+.kpi span{display:block;font-size:12px;color:var(--mut);font-weight:600}.kpi strong{font-size:19px;font-weight:800;letter-spacing:-.02em}
+.kpi div:last-child strong{color:var(--pri)}
+.sub{font-size:12px;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:.05em;margin:4px 0 2px}
+table{width:100%;border-collapse:collapse;font-size:14px}
+td{padding:9px 0;border-bottom:1px solid var(--bd)}tr:last-child td{border-bottom:none}
+td:last-child{text-align:right;font-weight:700;font-variant-numeric:tabular-nums}
+details{margin-top:10px;border-top:1px solid var(--bd);padding-top:10px}
+summary{cursor:pointer;font-size:13px;font-weight:600;color:var(--pri);list-style:none}
+summary::-webkit-details-marker{display:none}
+summary::after{content:" ▾"}details[open] summary::after{content:" ▴"}
+
+.empty{text-align:center;padding:36px 20px}
+.empty div{font-size:40px;margin-bottom:6px}
+
+.hide{display:none!important}
+.msg{color:var(--bad);background:var(--bad-soft);font-size:14px;margin-top:10px;padding:0;border-radius:12px;font-weight:500}
+.msg:not(:empty){padding:12px 14px}
 </style>
 </head>
 <body>
-<header><h1>✨ Luminosos – Fechamentos</h1></header>
+<header>
+  <div class="hd">
+    <div class="logo">✨</div>
+    <div><h1>Luminosos</h1><p>Fechamento semanal</p></div>
+  </div>
+</header>
 <nav>
-  <button data-t="fechar" class="act">Fechar semana</button>
-  <button data-t="consulta">Consulta</button>
-  <button data-t="cadastros">Cadastros</button>
+  <button data-t="fechar" class="act"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg><span>Fechar</span></button>
+  <button data-t="consulta"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg><span>Consulta</span></button>
+  <button data-t="cadastros"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg><span>Cadastros</span></button>
 </nav>
 <main>
 
 <!-- FECHAR SEMANA -->
 <section id="t-fechar">
   <div class="card">
-    <h2>Registrar fechamento da semana</h2>
+    <h2><span class="ic">📅</span>Dados da semana</h2>
     <div class="row">
       <div><label>Data início</label><input type="date" id="f-ini"></div>
       <div><label>Data fim</label><input type="date" id="f-fim"></div>
@@ -64,12 +145,12 @@ table{width:100%;border-collapse:collapse;font-size:14px}td{padding:6px 0;border
       <div><label>Vendido no cartão (R$)</label><input type="number" step="0.01" min="0" inputmode="decimal" id="f-cartao"></div>
       <div><label>Vendido em dinheiro (R$)</label><input type="number" step="0.01" min="0" inputmode="decimal" id="f-dinheiro"></div>
     </div>
-    <label>Total vendido</label>
-    <div class="tot" id="f-total">R$ 0,00</div>
+    <div class="totbox"><span>Total vendido</span><div class="tot" id="f-total">R$ 0,00</div></div>
   </div>
 
   <div class="card">
-    <h2>Gerente</h2>
+    <h2><span class="ic">👩‍💼</span>Gerente</h2>
+    <p class="mut" style="margin:0">Preenchido automaticamente com o valor cadastrado. Se precisar, altere só nesta semana.</p>
     <div class="row">
       <div><label>Nome</label><input id="f-ger-nome"></div>
       <div><label>Valor da semana (R$)</label><input type="number" step="0.01" min="0" inputmode="decimal" id="f-ger-valor"></div>
@@ -77,27 +158,27 @@ table{width:100%;border-collapse:collapse;font-size:14px}td{padding:6px 0;border
   </div>
 
   <div class="card">
-    <h2>Comissões</h2>
+    <h2><span class="ic">🤝</span>Comissões</h2>
     <div id="f-coms"></div>
-    <button id="btn-add-com" class="sm">+ Comissão</button>
+    <button id="btn-add-com" class="add">+ Comissão</button>
     <p class="mut" id="no-com-msg"></p>
   </div>
 
-  <button class="p" style="width:100%;padding:14px;font-size:17px" id="btn-fechar">Fechar semana</button>
+  <button class="p big" id="btn-fechar">Fechar semana</button>
   <div class="msg" id="f-msg"></div>
 
-  <div class="card hide" id="f-res" style="margin-top:16px">
-    <h2>Resultado do fechamento</h2>
+  <div class="card hide" id="f-res" style="margin-top:14px">
+    <h2><span class="ic">✅</span>Semana fechada!</h2>
     <div class="res" id="f-res-body"></div>
-    <p class="mut">Fechamento salvo. Veja na aba Consulta.</p>
-    <button id="btn-novo">Novo fechamento</button>
+    <p class="mut" id="f-res-nota"></p>
+    <button id="btn-novo" style="width:100%">Novo fechamento</button>
   </div>
 </section>
 
 <!-- CONSULTA -->
 <section id="t-consulta" class="hide">
   <div class="card">
-    <h2>Semanas fechadas</h2>
+    <h2><span class="ic">📊</span>Semanas fechadas</h2>
     <label>Filtrar por cidade</label>
     <select id="c-filtro"></select>
   </div>
@@ -107,7 +188,7 @@ table{width:100%;border-collapse:collapse;font-size:14px}td{padding:6px 0;border
 <!-- CADASTROS -->
 <section id="t-cadastros" class="hide">
   <div class="card">
-    <h2>Parâmetros</h2>
+    <h2><span class="ic">⚙️</span>Parâmetros</h2>
     <div class="row">
       <div><label>Valor de venda do brinquedo (R$)</label><input type="number" step="0.01" min="0" id="p-preco"></div>
       <div><label>Taxa média do cartão (%)</label><input type="number" step="0.01" min="0" id="p-taxa"></div>
@@ -117,16 +198,16 @@ table{width:100%;border-collapse:collapse;font-size:14px}td{padding:6px 0;border
     <p class="mut">Material = (total ÷ valor de venda) × multiplicador</p>
   </div>
   <div class="card">
-    <h2>Gerente</h2>
+    <h2><span class="ic">👩‍💼</span>Gerente</h2>
     <div class="row">
       <div><label>Nome</label><input id="p-ger-nome"></div>
       <div><label>Valor fixo semanal (R$)</label><input type="number" step="0.01" min="0" id="p-ger-valor"></div>
     </div>
   </div>
-  <button class="p" id="btn-salvar-par" style="width:100%;margin-bottom:16px">Salvar parâmetros</button>
+  <button class="p big" id="btn-salvar-par" style="margin-bottom:14px">Salvar parâmetros</button>
 
   <div class="card">
-    <h2>Comissionados</h2>
+    <h2><span class="ic">🤝</span>Comissionados</h2>
     <div class="row" style="align-items:flex-end">
       <div style="flex:3"><input id="p-com-nome" placeholder="Nome do comissionado"></div>
       <div style="flex:1;min-width:90px"><button class="p" id="btn-add-comi" style="width:100%">Adicionar</button></div>
@@ -134,7 +215,7 @@ table{width:100%;border-collapse:collapse;font-size:14px}td{padding:6px 0;border
     <ul class="list" id="p-com-lista"></ul>
   </div>
   <div class="card">
-    <h2>Cidades</h2>
+    <h2><span class="ic">📍</span>Cidades</h2>
     <div class="row" style="align-items:flex-end">
       <div style="flex:3"><input id="p-cid-nome" placeholder="Nome da cidade"></div>
       <div style="flex:1;min-width:90px"><button class="p" id="btn-add-cid" style="width:100%">Adicionar</button></div>
@@ -142,7 +223,7 @@ table{width:100%;border-collapse:collapse;font-size:14px}td{padding:6px 0;border
     <ul class="list" id="p-cid-lista"></ul>
   </div>
   <div class="card">
-    <h2>Backup</h2>
+    <h2><span class="ic">💾</span>Backup</h2>
     <p class="mut">Os dados ficam salvos neste aparelho/navegador. Exporte um backup de vez em quando ou para passar para outro aparelho.</p>
     <div class="row">
       <button id="btn-exp">Exportar backup</button>
@@ -177,6 +258,7 @@ document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>{
   if(b.dataset.t==='consulta') renderConsulta();
   if(b.dataset.t==='cadastros') renderCadastros();
   if(b.dataset.t==='fechar') refreshFecharLists();
+  scrollTo({top:0});
 });
 
 /* CADASTROS */
@@ -193,7 +275,7 @@ function renderCadastros(){
 }
 $('btn-salvar-par').onclick=()=>{
   Object.assign(db.config,{precoVenda:num('p-preco'),taxaCartao:num('p-taxa'),mult:num('p-mult'),gerenteNome:$('p-ger-nome').value.trim(),gerenteValor:num('p-ger-valor')});
-  save();alert('Parâmetros salvos!');
+  save();gerEditado=false;syncGerente();alert('Parâmetros salvos!');
 };
 function addTo(k,inp){const v=$(inp).value.trim();if(!v)return;
   if(!db[k].some(x=>x.toLowerCase()===v.toLowerCase())){db[k].push(v);db[k].sort((a,b)=>a.localeCompare(b,'pt-BR'));save();}
@@ -218,7 +300,15 @@ $('imp-file').onchange=e=>{
 };
 
 /* FECHAR SEMANA */
+let gerEditado=false;
+function syncGerente(){
+  if(gerEditado)return;
+  $('f-ger-nome').value=db.config.gerenteNome||'';
+  $('f-ger-valor').value=db.config.gerenteValor||'';
+}
+$('f-ger-nome').oninput=$('f-ger-valor').oninput=()=>gerEditado=true;
 function refreshFecharLists(){
+  syncGerente();
   $('dl-cidades').innerHTML=db.cidades.map(c=>`<option value="${esc(c)}">`).join('');
   $('no-com-msg').textContent=db.comissionados.length?'':'Cadastre os comissionados na aba Cadastros.';
   document.querySelectorAll('#f-coms select').forEach(s=>{const v=s.value;s.innerHTML=comOptions();s.value=v;});
@@ -248,7 +338,7 @@ function calc(f,c){
 }
 function resetFechar(){
   ['f-ini','f-fim','f-cidade','f-cartao','f-dinheiro'].forEach(i=>$(i).value='');
-  $('f-ger-nome').value=db.config.gerenteNome;$('f-ger-valor').value=db.config.gerenteValor||'';
+  gerEditado=false;syncGerente();
   $('f-coms').innerHTML='';updTotal();$('f-res').classList.add('hide');$('f-msg').textContent='';
   $('btn-fechar').disabled=false;
 }
@@ -275,12 +365,12 @@ $('btn-fechar').onclick=()=>{
   Object.assign(f,calc(f,f.config));
   db.fechamentos.push(f);save();refreshFecharLists();
   $('f-res-body').innerHTML=`
-    <div><span>Total vendido</span><b>${fmt(f.total)}</b></div>
-    <div><span>Brinquedos vendidos</span><b>${f.brinquedos.toLocaleString('pt-BR',{maximumFractionDigits:1})}</b></div>
-    <div><span>🛒 Transferir p/ compra de material</span><b>${fmt(f.material)}</b></div>
-    <div><span>💵 Saldo em dinheiro – caixa</span><b style="color:${f.caixa<0?'var(--bad)':'var(--ok)'}">${fmt(f.caixa)}</b></div>
-    <div><span>🏦 Transferir Santander</span><b>${fmt(f.santander)}</b></div>
-    <p class="mut">Caixa = dinheiro − comissões (${fmt(f.totCom)}) − gerente (${fmt(f.gerente.valor)}). Santander = cartão − ${f.config.taxaCartao}% de taxa.</p>`;
+    <div class="tile v"><span class="t">💰 Total vendido</span><b>${fmt(f.total)}</b></div>
+    <div class="tile"><span class="t">🎈 Brinquedos vendidos</span><b>${f.brinquedos.toLocaleString('pt-BR',{maximumFractionDigits:1})}</b></div>
+    <div class="tile a"><span class="t">🛒 Transferir p/ material</span><b>${fmt(f.material)}</b></div>
+    <div class="tile b"><span class="t">🏦 Transferir Santander</span><b>${fmt(f.santander)}</b></div>
+    <div class="tile ${f.caixa<0?'r':'g'}"><span class="t">💵 Saldo em dinheiro – caixa</span><b>${fmt(f.caixa)}</b></div>`;
+  $('f-res-nota').textContent=`Caixa = dinheiro − comissões (${fmt(f.totCom)}) − gerente (${fmt(f.gerente.valor)}). Santander = cartão − ${f.config.taxaCartao}% de taxa. Fechamento salvo na Consulta.`;
   $('f-res').classList.remove('hide');$('btn-fechar').disabled=true;
   $('f-res').scrollIntoView({behavior:'smooth'});
 };
@@ -293,20 +383,22 @@ function renderConsulta(){
   $('c-filtro').value=cs.includes(cur)?cur:'';
   const lst=db.fechamentos.filter(f=>!$('c-filtro').value||f.cidade===$('c-filtro').value)
     .sort((a,b)=>b.inicio.localeCompare(a.inicio));
-  if(!lst.length){$('c-lista').innerHTML='<div class="card mut">Nenhuma semana fechada ainda.</div>';return;}
+  if(!lst.length){$('c-lista').innerHTML='<div class="card empty mut"><div>🗓️</div>Nenhuma semana fechada ainda.</div>';return;}
   $('c-lista').innerHTML=lst.map(f=>{
     const pag=[...f.comissoes.map(c=>[c.nome,c.valor]),...(f.gerente.valor?[[f.gerente.nome+' (gerente)',f.gerente.valor]]:[])];
     return `<div class="card wk">
-      <div style="display:flex;justify-content:space-between;align-items:start">
-        <div><h3>${fmtD(f.inicio)} a ${fmtD(f.fim)}</h3><div class="mut">📍 ${esc(f.cidade)}</div></div>
+      <div class="wk-hd">
+        <div><h3>${fmtD(f.inicio)} – ${fmtD(f.fim)}</h3><span class="chip">📍 ${esc(f.cidade)}</span></div>
         <button class="x" data-id="${f.id}" title="Excluir">🗑</button>
       </div>
+      <div class="wk-body">
       <div class="kpi">
         <div><span>Brinquedos vendidos</span><strong>${f.brinquedos.toLocaleString('pt-BR',{maximumFractionDigits:1})}</strong></div>
         <div><span>Total vendido</span><strong>${fmt(f.total)}</strong></div>
       </div>
+      <div class="sub">Pagamentos</div>
       <table>${pag.map(([n,v])=>`<tr><td>${esc(n)}</td><td>${fmt(v)}</td></tr>`).join('')||'<tr><td class="mut">Sem comissões</td><td></td></tr>'}</table>
-      <details style="margin-top:8px"><summary class="mut">Mais detalhes</summary>
+      <details><summary>Mais detalhes</summary>
         <table>
           <tr><td>Cartão</td><td>${fmt(f.cartao)}</td></tr>
           <tr><td>Dinheiro</td><td>${fmt(f.dinheiro)}</td></tr>
@@ -314,6 +406,7 @@ function renderConsulta(){
           <tr><td>Saldo caixa</td><td>${fmt(f.caixa)}</td></tr>
           <tr><td>Santander</td><td>${fmt(f.santander)}</td></tr>
         </table></details>
+      </div>
     </div>`}).join('');
   document.querySelectorAll('#c-lista .x').forEach(b=>b.onclick=()=>{
     if(!confirm('Excluir este fechamento?'))return;
